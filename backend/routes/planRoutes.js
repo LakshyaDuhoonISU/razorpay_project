@@ -3,7 +3,7 @@ import { createPlan, getPlanDetails, getPlansByBusiness } from '../controllers/p
 
 const router = express.Router()
 
-router.get('/business/:businessId', getPlansByBusiness)
+router.get('/business', getPlansByBusiness)
 router.post('/', createPlan)
 router.get('/:id', getPlanDetails)
 

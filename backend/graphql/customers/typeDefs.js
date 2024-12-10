@@ -10,6 +10,10 @@ export const customerTypeDefs = gql`
         createdAt: String
         updatedAt: String
     }
+        
+    type Query {
+        _empty: String
+    }
 
     type Mutation {
         updateCustomer(id: ID!, name: String, email: String, phone: String): Customer!

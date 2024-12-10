@@ -8,12 +8,14 @@ const CustomerSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     },
     phone: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        match: /^[0-9]{10}$/
     },
     businessId: { 
         type: mongoose.Schema.Types.ObjectId, 

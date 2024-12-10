@@ -1,0 +1,121 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 80px;
+}
+
+.addButton {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.addButton:hover {
+  background-color: #43a047;
+}
+
+.content {
+  width: 80%;
+  max-width: 900px;
+  margin: auto;
+  text-align: center;
+}
+
+.form {
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form input,
+.form select,
+.form button {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.form .saveButton {
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+}
+
+.form .saveButton:hover {
+  background-color: #43a047;
+}
+
+.form .cancelButton {
+  background-color: #f44336;
+  color: white;
+  cursor: pointer;
+}
+
+.form .cancelButton:hover {
+  background-color: #e53935;
+}
+
+.subscriptionList {
+  list-style-type: none;
+  padding: 0;
+}
+
+.subscriptionItem {
+  background-color: #f9f9f9;
+  padding: 20px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.editButton {
+  background-color: #4caf50;
+  color: white;
+  margin-right: 10px;
+}
+
+.editButton:hover {
+  background-color: #43a047;
+}
+
+.deleteButton {
+  background-color: #f44336;
+  color: white;
+}
+
+.deleteButton:hover {
+  background-color: #e53935;
+}
+
+.toastError {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #f44336;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  font-size: 16px;
+  z-index: 1000;
+}
+
+.toastSuccess {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  font-size: 16px;
+  z-index: 1000;
+}

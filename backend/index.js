@@ -11,6 +11,7 @@ import businessRoutes from './routes/businessRoutes.js';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { typeDefs, resolvers } from './graphql/index.js';
+import admin from './firebase.cjs';
 
 // connect to database
 connectDB();
@@ -38,15 +39,21 @@ app.use('/api/plans', planRoutes);
 const apolloServer = new ApolloServer({
     typeDefs,
     resolvers,
-    context: ({ req }) => {
+    context: async ({ req }) => {
         const authHeader = req.headers.authorization || '';
         const token = authHeader.replace('Bearer ', '');
-        return { token };
+
+        // Verify Firebase token
+        try {
+            const decoded = await admin.auth().verifyIdToken(token);
+            return { businessId: decoded.uid }; // Pass the businessId to context
+        } catch (err) {
+            throw new Error('Unauthorized');
+        }
     },
 });
 
 await apolloServer.start();
-
 app.use('/graphql', expressMiddleware(apolloServer))
 
 // Global Error Handler

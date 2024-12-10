@@ -3,9 +3,9 @@ import { createCustomer, getCustomerProfile, getCustomersByBusiness, getTransact
 
 const router = express.Router()
 
-router.get('/business/:businessId', getCustomersByBusiness)
+router.get('/', getCustomersByBusiness)
 router.post('/', createCustomer)
-router.get('/customer/transactions/:id', getTransactionsByCustomer)
+router.get('/transactions/:id', getTransactionsByCustomer)
 router.get('/:id', getCustomerProfile)
 
 export default router

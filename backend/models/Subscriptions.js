@@ -6,13 +6,15 @@ const SubscriptionSchema = new mongoose.Schema({
         ref: 'Customer',
         required: true
     },
-    planName: {
-        type: String,
+    planId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Plan',
         required: true
-    }, // Example: Basic, Premium, etc.
+    },
     price: {
         type: Number,
-        required: true
+        required: true,
+        min: 0
     },
     startDate: {
         type: Date,
@@ -20,7 +22,14 @@ const SubscriptionSchema = new mongoose.Schema({
     },
     endDate: {
         type: Date,
-        default: null // For non-expiring plans
+        default: null, // For non-expiring subscriptions
+        validate: {
+            validator: function (value) {
+                // Ensure endDate is after startDate if provided
+                return !value || value > this.startDate;
+            },
+            message: 'End date must be after the start date.'
+        }
     },
     status: {
         type: String,

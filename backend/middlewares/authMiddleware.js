@@ -1,16 +1,20 @@
-import jwt from "jsonwebtoken";
-import { SECRET_KEY } from "../constants.js";
+import admin from "../firebase.cjs"; // Firebase Admin SDK
 
 const authMiddleware = async (req, res, next) => {
     try {
         const authHeader = req.header("Authorization");
-        if (!authHeader) {
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
             return res.status(401).send({ error: "Authentication token missing" });
         }
 
         const token = authHeader.replace("Bearer ", "");
-        const decoded = jwt.verify(token, SECRET_KEY);
-        req.businessId = decoded.id;
+
+        // Verify the Firebase token
+        const decoded = await admin.auth().verifyIdToken(token);
+
+        // Attach the Firebase UID to the request
+        req.firebaseUid = decoded.uid;
+
         next();
     } catch (err) {
         console.error(err);

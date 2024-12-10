@@ -8,12 +8,14 @@ const BusinessSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/  // This ensures the email is in the correct format
     },
     phone: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        match: /^[0-9]{10}$/  // This ensures the phone number is exactly 10 digits long
     },
     firebaseUid: {  // Store the Firebase UID which is unique to the business
         type: String,

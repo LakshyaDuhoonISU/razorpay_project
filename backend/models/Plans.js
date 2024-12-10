@@ -6,15 +6,18 @@ const PlanSchema = new mongoose.Schema({
         required: true
     }, // Example: Basic, Premium, etc.
     description: {
-        type: String
+        type: String,
+        maxlength: 500
     }, // Brief about the plan
     price: {
         type: Number,
-        required: true
+        required: true,
+        min: 0
     },
     duration: {
         type: Number,
-        required: true
+        required: true,
+        min: 1
     }, // Duration in days
     businessId: {
         type: mongoose.Schema.Types.ObjectId,

@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 
 const TransactionSchema = new mongoose.Schema({
+    businessId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Business',
+        required: true
+    },
     customerId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Customer',
@@ -8,7 +13,8 @@ const TransactionSchema = new mongoose.Schema({
     },
     amount: {
         type: Number,
-        required: true
+        required: true,
+        min: 0
     },
     status: {
         type: String,

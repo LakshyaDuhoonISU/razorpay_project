@@ -7,8 +7,13 @@ export const businessTypeDefs = gql`
         email: String!
         phone: String!
         address: String
+        firebaseUid: String!
         createdAt: String
         updatedAt: String
+    }
+
+    type Query {
+        _empty: String
     }
 
     type Mutation {

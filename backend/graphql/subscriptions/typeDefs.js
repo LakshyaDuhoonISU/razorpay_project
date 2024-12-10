@@ -4,7 +4,7 @@ export const subscriptionTypeDefs = gql`
     type Subscription {
         id: ID!
         customerId: ID!
-        planName: String!
+        planId: ID!
         price: Float!
         startDate: String
         endDate: String
@@ -15,10 +15,14 @@ export const subscriptionTypeDefs = gql`
         updatedAt: String
     }
 
+    type Query {
+        _empty: String
+    }
+
     type Mutation {
         updateSubscription(
             id: ID!
-            planName: String
+            planId: ID
             price: Float
             startDate: String
             endDate: String

@@ -12,6 +12,10 @@ export const planTypeDefs = gql`
         updatedAt: String
     }
 
+    type Query {
+        _empty: String
+    }
+
     type Mutation {
         updatePlan(id: ID!, name: String, description: String, price: Float, duration: Int): Plan!
         deletePlan(id: ID!): String!
