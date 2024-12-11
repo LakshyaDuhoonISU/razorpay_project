@@ -8,8 +8,6 @@ export const subscriptionTypeDefs = gql`
         price: Float!
         startDate: String
         endDate: String
-        status: String!
-        paymentId: ID!
         businessId: ID!
         createdAt: String
         updatedAt: String
@@ -26,7 +24,6 @@ export const subscriptionTypeDefs = gql`
             price: Float
             startDate: String
             endDate: String
-            status: String
         ): Subscription!
         deleteSubscription(id: ID!): String!
     }

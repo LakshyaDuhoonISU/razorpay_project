@@ -5,8 +5,8 @@ export const planResolvers = {
         _empty: () => "Empty query",
     },
     Mutation: {
-        updatePlan: async (_, { id, name, description, price, duration }, { businessId }) => {
-            const plan = await Plan.findOne({ _id: id, businessId });
+        updatePlan: async (_, { id, name, description, price, duration }) => {
+            const plan = await Plan.findOne({ _id: id });
 
             if (!plan) {
                 throw new Error("Plan not found or unauthorized");
@@ -21,8 +21,8 @@ export const planResolvers = {
             return updatedPlan;
         },
 
-        deletePlan: async (_, { id }, { businessId }) => {
-            const plan = await Plan.findOne({ _id: id, businessId });
+        deletePlan: async (_, { id }) => {
+            const plan = await Plan.findOne({ _id: id });
 
             if (!plan) {
                 throw new Error("Plan not found or unauthorized");

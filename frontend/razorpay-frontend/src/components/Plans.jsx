@@ -1,9 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
-import { Box, Drawer, List, ListItem, ListItemText, IconButton, AppBar, Toolbar, Typography, Button } from '@mui/material';
+import { Box, Drawer, List, ListItem, ListItemText, IconButton, AppBar, Toolbar, Typography, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
+import { useMutation } from '@apollo/client';
+import { gql } from 'graphql-tag';
 import styles from './Plans.module.css';
+
+// Define GraphQL mutation to update a plan
+const UPDATE_PLAN = gql`
+  mutation UpdatePlan($id: ID!, $name: String, $description: String, $price: Float, $duration: Int) {
+    updatePlan(id: $id, name: $name, description: $description, price: $price, duration: $duration) {
+      id
+      name
+      description
+      price
+      duration
+    }
+  }
+`;
+
+// Define GraphQL mutation to delete a plan
+const DELETE_PLAN = gql`
+  mutation DeletePlan($id: ID!) {
+    deletePlan(id: $id)
+  }
+`;
 
 function Plans() {
     const { idToken, businessId } = useAuth();
@@ -21,6 +43,14 @@ function Plans() {
     const [drawerOpen, setDrawerOpen] = useState(false); // State to toggle Drawer
     const [toastMessage, setToastMessage] = useState(''); // State for toast message
     const [toastError, setToastError] = useState(false); // State for error type in toast
+
+    // GraphQL mutations
+    const [updatePlan] = useMutation(UPDATE_PLAN);
+    const [deletePlan] = useMutation(DELETE_PLAN);
+
+    // Dialog management for deletion confirmation
+    const [openDialog, setOpenDialog] = useState(false);
+    const [planToDelete, setPlanToDelete] = useState(null); // Store the plan ID for deletion
 
     useEffect(() => {
         const storedBusinessId = localStorage.getItem('businessId');
@@ -66,10 +96,9 @@ function Plans() {
             if (response.ok) {
                 const data = await response.json();
                 setPlans((prevPlans) => [...prevPlans, data.data]); // Add the new plan to the list
-                setSuccessMessage('Plan added successfully!');
                 setToastMessage('Plan added successfully!');
-                setToastError(false); // Set as success
-                setFormData({ name: '', description: '', price: '', duration: '', businessId: businessId }); // Reset form
+                setToastError(false);
+                setFormData({ name: '', description: '', price: '', duration: '', businessId: businessId });
                 setShowForm(false); // Hide form
                 setTimeout(() => {
                     setToastMessage('');
@@ -78,7 +107,7 @@ function Plans() {
                 const errorData = await response.json();
                 setError(errorData.message || 'Failed to add plan');
                 setToastMessage(errorData.message || 'Failed to add plan');
-                setToastError(false); // Set as success
+                setToastError(true);
                 setTimeout(() => {
                     setToastMessage('');
                 }, 5000);
@@ -87,43 +116,79 @@ function Plans() {
             console.error('Error adding plan:', error);
             setError('An error occurred while adding the plan');
             setToastMessage('An error occurred while adding the plan');
-            setToastError(false); // Set as success
+            setToastError(true);
             setTimeout(() => {
                 setToastMessage('');
             }, 5000);
         }
     };
 
-    const handleEditPlan = async (planId) => {
+    const handleEditPlan = (planId) => {
         const planToEdit = plans.find((plan) => plan._id === planId);
         setFormData(planToEdit);
         setShowForm(true);
     };
 
-    const handleDeletePlan = async (planId) => {
+    const handleUpdatePlan = async (e) => {
+        e.preventDefault();
         try {
-            const response = await fetch(`http://localhost:8000/api/plans/${planId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${idToken}`,
+            const { data } = await updatePlan({
+                variables: {
+                    id: formData._id,
+                    name: formData.name,
+                    description: formData.description,
+                    price: parseFloat(formData.price),
+                    duration: parseInt(formData.duration),
                 },
             });
 
-            if (response.ok) {
-                setPlans(plans.filter((plan) => plan._id !== planId));
-                setSuccessMessage('Plan deleted successfully!');
-                setToastMessage('Plan deleted successfully!');
-                setToastError(false); // Set as success
-                setTimeout(() => {
-                    setToastMessage('');
-                }, 5000);
-            } else {
-                console.error('Failed to delete plan');
-            }
+            setPlans((prevPlans) =>
+                prevPlans.map((plan) => (plan._id === formData._id ? { ...plan, ...data.updatePlan } : plan))
+            );
+
+            setToastMessage('Plan updated successfully!');
+            setToastError(false);
+            setShowForm(false); // Close form
+            setTimeout(() => {
+                setToastMessage('');
+            }, 5000);
+        } catch (error) {
+            console.log(error)
+            setToastMessage('Failed to update plan');
+            setToastError(true);
+            setTimeout(() => {
+                setToastMessage('');
+            }, 5000);
+        }
+    };
+
+    // Handle delete confirmation
+    const openConfirmationDialog = (planId) => {
+        setPlanToDelete(planId);
+        setOpenDialog(true);
+    };
+
+    const cancelDelete = () => {
+        setOpenDialog(false);
+    };
+
+    const handleDeletePlan = async () => {
+        try {
+            await deletePlan({
+                variables: { id: planToDelete },
+            });
+
+            setPlans(plans.filter((plan) => plan._id !== planToDelete));
+            setToastMessage('Plan deleted successfully!');
+            setToastError(false);
+            setTimeout(() => {
+                setToastMessage('');
+            }, 5000);
+            setOpenDialog(false); // Close dialog after deletion
         } catch (error) {
             console.error('Error deleting plan:', error);
-            setToastMessage('An error occurred while deleting the plan');
-            setToastError(false); // Set as success
+            setToastMessage('Failed to delete plan');
+            setToastError(true);
             setTimeout(() => {
                 setToastMessage('');
             }, 5000);
@@ -180,9 +245,11 @@ function Plans() {
                 <button className={styles.addButton} onClick={() => setShowForm(true)}>
                     Add Plan
                 </button>
-
+                {plans.length === 0 ? (
+                    <p className={styles.noSubs}>No plans found</p> // Display if there are no plans
+                ) : null}
                 {showForm && (
-                    <form className={styles.form} onSubmit={handleAddPlan}>
+                    <form className={styles.form} onSubmit={formData._id ? handleUpdatePlan : handleAddPlan}>
                         <h3>{formData._id ? 'Edit Plan' : 'Add Plan'}</h3>
                         <input
                             type="text"
@@ -220,9 +287,6 @@ function Plans() {
                     </form>
                 )}
 
-                {/* {successMessage && <p className={styles.success}>{successMessage}</p>}
-                {error && <p className={styles.error}>{error}</p>} */}
-
                 <ul className={styles.planList}>
                     {plans.map((plan) => (
                         <li key={plan._id} className={styles.planItem}>
@@ -241,13 +305,30 @@ function Plans() {
                             <button onClick={() => handleEditPlan(plan._id)} className={styles.editButton}>
                                 Edit
                             </button>
-                            <button onClick={() => handleDeletePlan(plan._id)} className={styles.deleteButton}>
+                            <button onClick={() => openConfirmationDialog(plan._id)} className={styles.deleteButton}>
                                 Delete
                             </button>
                         </li>
                     ))}
                 </ul>
             </Box>
+
+            {/* Confirmation Dialog */}
+            <Dialog open={openDialog} onClose={cancelDelete}>
+                <DialogTitle>Confirm Deletion</DialogTitle>
+                <DialogContent>
+                    <p>Are you sure you want to delete this plan?</p>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={cancelDelete} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleDeletePlan} color="secondary">
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
             {/* Toast Notification */}
             {toastMessage && (
                 <div className={toastError ? styles.toastError : styles.toastSuccess}>

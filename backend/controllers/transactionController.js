@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import Transaction from "../models/Transactions.js";
 import Customer from "../models/Customers.js";
+import Business from "../models/Business.js";
+import Plan from "../models/Plans.js";
 
 // Helper function to validate MongoDB ObjectId
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
@@ -8,7 +10,7 @@ const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 // Create a new transaction
 export const createTransaction = async (req, res) => {
     try {
-        const { customerId, amount, status, method } = req.body;
+        const { customerId, planId, date, status, businessId } = req.body;
 
         // Validate customerId
         if (!isValidObjectId(customerId)) {
@@ -16,14 +18,19 @@ export const createTransaction = async (req, res) => {
         }
 
         // Check if the customer belongs to the authenticated business
-        const customer = await Customer.findOne({ _id: customerId, businessId: req.firebaseUid });
+        const customer = await Customer.findOne({ _id: customerId, businessId: businessId });
         if (!customer) {
             return res.status(403).send({ message: "Unauthorized to create transaction for this customer" });
         }
 
         // Create the transaction and associate it with the business
-        const transaction = await Transaction.create({ customerId, amount, status, method, businessId: req.firebaseUid });
-        res.status(201).send({ message: "Transaction created successfully", data: transaction });
+        const transaction = await Transaction.create({ customerId, planId, status, date, businessId: businessId });
+
+        const fullTransaction = await Transaction.findById(transaction._id)
+            .populate('customerId', 'name')
+            .populate('planId', 'name');
+
+        res.status(201).send({ message: "Transaction created successfully", data: fullTransaction });
     } catch (err) {
         console.error(err);
         res.status(500).send({ message: "An error occurred while creating the transaction", error: err.message });
@@ -33,10 +40,15 @@ export const createTransaction = async (req, res) => {
 // Get all transactions for a specific business
 export const getTransactionsByBusiness = async (req, res) => {
     try {
-        const businessId = req.firebaseUid; // Use firebaseUid for the authenticated business
+        const firebaseUid = req.firebaseUid; // Use firebaseUid for the authenticated business
+        const business = await Business.findOne({ firebaseUid });
+
+        if (!business) {
+            return res.status(404).send({ message: "Business not found" });
+        }
 
         // Fetch all customers belonging to the logged-in business
-        const customerIds = await Customer.find({ businessId }).distinct('_id');
+        const customerIds = await Customer.find({ businessId: business._id }).distinct('_id');
 
         if (customerIds.length === 0) {
             return res.status(404).send({ message: "No customers found for this business" });
@@ -69,7 +81,7 @@ export const getTransactionDetail = async (req, res) => {
         const transaction = await Transaction.findOne({ _id: transactionId })
             .populate('customerId')
             .populate('planId');
-        
+
         if (!transaction) {
             return res.status(404).send({ message: "Transaction not found" });
         }

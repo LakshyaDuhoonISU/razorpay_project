@@ -7,7 +7,7 @@ import Business from '../models/Business.js';
 // Create a new subscription
 export const createSubscription = async (req, res) => {
     try {
-        const { customerId, planId, price, startDate, endDate, status, paymentId } = req.body;
+        const { customerId, planId, price, startDate, endDate, businessId } = req.body;
 
         // Validate customerId and ensure the customer belongs to the authenticated business
         if (!mongoose.Types.ObjectId.isValid(customerId)) {
@@ -20,7 +20,7 @@ export const createSubscription = async (req, res) => {
             return res.status(400).send({ message: "Invalid planId or unauthorized plan" });
         }
 
-        const customer = await Customer.findOne({ _id: customerId, businessId: req.firebaseUid });
+        const customer = await Customer.findOne({ _id: customerId, businessId: businessId });
         if (!customer) {
             return res.status(403).send({ message: "Unauthorized to create subscription for this customer" });
         }
@@ -32,12 +32,14 @@ export const createSubscription = async (req, res) => {
             price,
             startDate,
             endDate,
-            status,
-            paymentId,
-            businessId: req.firebaseUid // Use authenticated business ID
+            businessId: businessId // Use authenticated business ID
         });
 
-        res.status(201).send({ message: "Subscription created successfully", data: subscription });
+        const fullSubscription = await Subscription.findById(subscription._id)
+            .populate('customerId', 'name')
+            .populate('planId', 'name');
+
+        res.status(201).send({ message: "Subscription created successfully", data: fullSubscription });
     } catch (err) {
         console.error(err);
         res.status(500).send({ message: "An error occurred while creating the subscription", error: err.message });
@@ -55,7 +57,9 @@ export const getSubscriptionsByCustomer = async (req, res) => {
         }
 
         // Fetch subscriptions for the specific customer
-        const subscriptions = await Subscription.find({ customerId }).populate('planId');
+        const subscriptions = await Subscription.find({ customerId })
+        .populate('customerId', 'name')
+        .populate('planId', 'name');
 
         if (subscriptions.length === 0) {
             return res.status(404).send({ message: "No subscriptions found for this customer" });

@@ -3,6 +3,7 @@ import Customer from "../../models/Customers.js";
 import Plan from "../../models/Plans.js";
 import Transaction from "../../models/Transactions.js";
 import Subscription from "../../models/Subscriptions.js";
+import admin from '../../firebase.cjs'
 
 export const businessResolvers = {
     Query: {
@@ -10,10 +11,10 @@ export const businessResolvers = {
     },
     Mutation: {
         // Update business profile
-        updateBusiness: async (_, { id, name, email, phone, address }, { businessId }) => {
-            if (id !== businessId) {
-                throw new Error("Unauthorized: Cannot delete another business's profile");
-            }
+        updateBusiness: async (_, { id, name, email, phone, address }) => {
+            // if (id !== businessId) {
+            //     throw new Error("Unauthorized: Cannot delete another business's profile");
+            // }
 
             // Find business by id and update
             const updatedBusiness = await Business.findByIdAndUpdate(
@@ -30,16 +31,24 @@ export const businessResolvers = {
         },
 
         // Delete business profile with cascading deletes
-        deleteBusiness: async (_, { id }, { businessId }) => {
-            if (id !== businessId) {
-                throw new Error("Unauthorized: Cannot delete another business's profile");
-            }
+        deleteBusiness: async (_, { id }) => {
+            // if (id !== businessId) {
+            //     throw new Error("Unauthorized: Cannot delete another business's profile");
+            // }
 
             // Find the business to delete
             const business = await Business.findById(id);
 
             if (!business) {
                 throw new Error("Business not found");
+            }
+
+            // Delete business from Firebase
+            try {
+                await admin.auth().deleteUser(business.firebaseUid);  // Firebase deletion
+            } catch (error) {
+                console.error("Error deleting user from Firebase:", error);
+                throw new Error("Failed to delete user from Firebase");
             }
 
             // Delete transactions associated with the business's customers

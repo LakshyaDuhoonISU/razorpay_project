@@ -3,12 +3,12 @@ import mongoose from "mongoose";
 const SubscriptionSchema = new mongoose.Schema({
     customerId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Customer',
+        ref: 'customers',
         required: true
     },
     planId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Plan',
+        ref: 'plans',
         required: true
     },
     price: {
@@ -30,16 +30,6 @@ const SubscriptionSchema = new mongoose.Schema({
             },
             message: 'End date must be after the start date.'
         }
-    },
-    status: {
-        type: String,
-        enum: ['Active', 'Paused', 'Cancelled'],
-        default: 'Active'
-    },
-    paymentId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Transaction',
-        required: true
     },
     businessId: {
         type: mongoose.Schema.Types.ObjectId,

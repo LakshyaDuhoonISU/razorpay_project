@@ -3,27 +3,45 @@ import mongoose from "mongoose";
 const TransactionSchema = new mongoose.Schema({
     businessId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Business',
+        ref: 'businesses',
         required: true
     },
     customerId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Customer',
+        ref: 'customers',
         required: true
     },
-    amount: {
-        type: Number,
+    planId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'plans',
+        required: true
+    },
+    date: {
+        type: Date,
+        default: Date.now
+    },
+    razorpay_order_id: {
+        type: String,
         required: true,
-        min: 0
+    },
+    razorpay_payment_id: {
+        type: String,
+        required: true,
+    },
+    razorpay_signature: {
+        type: String,
+        required: true,
     },
     status: {
         type: String,
-        enum: ['Pending', 'Success', 'Failed'],
+        required:true
+    },
+    amount: {
+        type: Number,
         required: true
     },
     method: {
         type: String,
-        enum: ['Card', 'UPI', 'Netbanking'],
         required: true
     }
 }, { timestamps: true });

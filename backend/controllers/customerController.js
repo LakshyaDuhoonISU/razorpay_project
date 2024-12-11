@@ -33,6 +33,10 @@ export const getCustomersByBusiness = async (req, res) => {
         // Step 2: Use the ObjectId of the business to fetch customers
         const customers = await Customer.find({ businessId: business._id }).select("-__v"); // Exclude metadata fields
 
+        // if (customers.length === 0) {
+        //     res.status(404).send({ message: "No customers found for this business", data:customers });
+        // }
+
         res.status(200).send({ message: "Customers retrieved successfully", data: customers });
     } catch (err) {
         console.error(err);

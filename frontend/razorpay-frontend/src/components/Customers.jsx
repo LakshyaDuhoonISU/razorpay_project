@@ -1,10 +1,30 @@
-// src/components/Customers.jsx
 import React, { useState, useEffect } from 'react';
 import styles from './Customers.module.css';
 import { useAuth } from './AuthContext';
-import { Box, Drawer, List, ListItem, ListItemText, IconButton, AppBar, Toolbar, Typography, Button } from '@mui/material';
+import { Box, Drawer, List, ListItem, ListItemText, IconButton, AppBar, Toolbar, Typography, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
+import { useMutation } from '@apollo/client';
+import { gql } from 'graphql-tag';
+
+// Define GraphQL mutation to update a customer
+const UPDATE_CUSTOMER = gql`
+  mutation UpdateCustomer($id: ID!, $name: String, $email: String, $phone: String) {
+    updateCustomer(id: $id, name: $name, email: $email, phone: $phone) {
+      id
+      name
+      email
+      phone
+    }
+  }
+`;
+
+// Define GraphQL mutation to delete a customer
+const DELETE_CUSTOMER = gql`
+  mutation DeleteCustomer($id: ID!) {
+    deleteCustomer(id: $id)
+  }
+`;
 
 function Customers() {
     const { idToken, businessId } = useAuth();
@@ -13,9 +33,17 @@ function Customers() {
     const [formData, setFormData] = useState({ name: '', email: '', phone: '', businessId: businessId });
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
-    const [drawerOpen, setDrawerOpen] = useState(false); // State to toggle Drawer
-    const [toastMessage, setToastMessage] = useState(''); // State for toast message
-    const [toastError, setToastError] = useState(false); // State for error type in toast
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const [toastError, setToastError] = useState(false);
+
+    // Use Apollo Client's useMutation hook to update and delete customers
+    const [updateCustomer] = useMutation(UPDATE_CUSTOMER);
+    const [deleteCustomer] = useMutation(DELETE_CUSTOMER);
+
+    // State for managing the dialog
+    const [openDialog, setOpenDialog] = useState(false);
+    const [customerToDelete, setCustomerToDelete] = useState(null); // Store customer to be deleted
 
     useEffect(() => {
         const storedBusinessId = localStorage.getItem('businessId');
@@ -37,8 +65,9 @@ function Customers() {
 
             if (response.ok) {
                 const data = await response.json();
-                // console.log(businessId);
                 setCustomers(data.data);
+            } else if (response.status === 404) {
+                setCustomers([]); // If no subscriptions, set as empty array
             } else {
                 console.error('Failed to fetch customers');
             }
@@ -62,12 +91,10 @@ function Customers() {
             if (response.ok) {
                 const data = await response.json();
                 setCustomers(prevCustomers => [...prevCustomers, data.data]); // Append new customer to the list
-                setSuccessMessage('Customer added successfully!');
-                // console.log("New customer data:", data);
                 setToastMessage('Customer added successfully!');
-                setToastError(false); // Set as success
-                setFormData({ name: '', email: '', phone: '', businessId: businessId }); // Reset form
-                setShowForm(false); // Hide form
+                setToastError(false);
+                setFormData({ name: '', email: '', phone: '', businessId: businessId });
+                setShowForm(false);
                 setTimeout(() => {
                     setToastMessage('');
                 }, 5000);
@@ -75,7 +102,7 @@ function Customers() {
                 const errorData = await response.json();
                 setError(errorData.message || 'Failed to add customer');
                 setToastMessage(errorData.message || 'Failed to add customer');
-                setToastError(true); // Set as error
+                setToastError(true);
                 setTimeout(() => {
                     setToastMessage('');
                 }, 5000);
@@ -91,43 +118,92 @@ function Customers() {
         }
     };
 
-    const handleDeleteCustomer = async (customerId) => {
-        try {
-            const response = await fetch(`http://localhost:8000/api/customers/${customerId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${idToken}`,
-                },
-            });
-
-            if (response.ok) {
-                setCustomers(customers.filter((customer) => customer._id !== customerId));
-                setToastMessage('Customer deleted successfully!');
-                setToastError(false); // Set as success
-                setTimeout(() => {
-                    setToastMessage('');
-                }, 5000);
-            } else {
-                console.error('Failed to delete customer');
-            }
-        } catch (error) {
-            console.error('Error deleting customer:', error);
-            setToastMessage('Failed to delete customer');
-            setToastError(true); // Set as error
-            setTimeout(() => {
-                setToastMessage('');
-            }, 5000);
-        }
-    };
-
     const handleEditCustomer = async (customerId) => {
         const customerToEdit = customers.find((customer) => customer._id === customerId);
         setFormData(customerToEdit);
         setShowForm(true);
     };
 
+    const handleUpdateCustomer = async (e) => {
+        e.preventDefault();
+
+        try {
+            const { data } = await updateCustomer({
+                variables: {
+                    id: formData._id,
+                    name: formData.name,
+                    email: formData.email,
+                    phone: formData.phone,
+                },
+            });
+
+            setCustomers((prevCustomers) =>
+                prevCustomers.map((customer) =>
+                    customer._id === formData._id ? { ...customer, ...formData } : customer
+                )
+            );
+
+            setToastMessage('Customer updated successfully!');
+            setToastError(false);
+            setShowForm(false);
+            setTimeout(() => {
+                setToastMessage('');
+            }, 5000);
+
+        } catch (error) {
+            setToastMessage('Failed to update customer');
+            console.log(error);
+            setToastError(true);
+            setTimeout(() => {
+                setToastMessage('');
+            }, 5000);
+        }
+    };
+
+    const handleDeleteCustomer = async () => {
+        try {
+            await deleteCustomer({
+                variables: { id: customerToDelete },
+            });
+
+            setCustomers(customers.filter((customer) => customer._id !== customerToDelete));
+            setToastMessage('Customer deleted successfully!');
+            setToastError(false);
+            setTimeout(() => {
+                setToastMessage('');
+            }, 5000);
+            setOpenDialog(false); // Close the dialog after deletion
+        } catch (error) {
+            console.error('Error deleting customer:', error);
+            setToastMessage('Failed to delete customer');
+            setToastError(true);
+            setTimeout(() => {
+                setToastMessage('');
+            }, 5000);
+        }
+    };
+
     const toggleDrawer = (open) => () => {
         setDrawerOpen(open);
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (formData._id) {
+            handleUpdateCustomer(e);
+        } else {
+            handleAddCustomer(e);
+        }
+    };
+
+    // Open the dialog to confirm deletion
+    const openConfirmationDialog = (customerId) => {
+        setCustomerToDelete(customerId);
+        setOpenDialog(true);
+    };
+
+    const cancelDelete = () => {
+        setOpenDialog(false);
     };
 
     return (
@@ -176,9 +252,11 @@ function Customers() {
                 <button className={styles.addButton} onClick={() => setShowForm(true)}>
                     Add Customer
                 </button>
-
+                {customers.length === 0 ? (
+                    <p className={styles.noSubs}>No customers found</p> // Display if there are no customers
+                ) : null}
                 {showForm && (
-                    <form className={styles.form} onSubmit={handleAddCustomer}>
+                    <form className={styles.form} onSubmit={handleSubmit}>
                         <h3>{formData._id ? 'Edit Customer' : 'Add Customer'}</h3>
                         <input
                             type="text"
@@ -210,9 +288,6 @@ function Customers() {
                     </form>
                 )}
 
-                {/* {successMessage && <p className={styles.success}>{successMessage}</p>} */}
-                {/* {error && <p className={styles.error}>{error}</p>} */}
-
                 <ul className={styles.customerList}>
                     {customers.map((customer) => (
                         <li key={customer._id} className={styles.customerItem}>
@@ -228,13 +303,30 @@ function Customers() {
                             <button onClick={() => handleEditCustomer(customer._id)} className={styles.editButton}>
                                 Edit
                             </button>
-                            <button onClick={() => handleDeleteCustomer(customer._id)} className={styles.deleteButton}>
+                            <button onClick={() => openConfirmationDialog(customer._id)} className={styles.deleteButton}>
                                 Delete
                             </button>
                         </li>
                     ))}
                 </ul>
             </Box>
+
+            {/* Confirmation Dialog */}
+            <Dialog open={openDialog} onClose={cancelDelete}>
+                <DialogTitle>Confirm Deletion</DialogTitle>
+                <DialogContent>
+                    <p>Are you sure you want to delete this customer?</p>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={cancelDelete} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleDeleteCustomer} color="secondary">
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
             {/* Toast Notification */}
             {toastMessage && (
                 <div className={toastError ? styles.toastError : styles.toastSuccess}>

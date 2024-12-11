@@ -6,8 +6,8 @@ export const customerResolvers = {
     },
     Mutation: {
         // Update customer details
-        updateCustomer: async (_, { id, name, email, phone }, { businessId }) => {
-            const customer = await Customer.findOne({ _id: id, businessId });
+        updateCustomer: async (_, { id, name, email, phone }) => {
+            const customer = await Customer.findOne({ _id: id });
 
             if (!customer) {
                 throw new Error("Customer not found or unauthorized");
@@ -24,10 +24,10 @@ export const customerResolvers = {
         },
 
         // Delete customer profile
-        deleteCustomer: async (_, { id }, { businessId }) => {
+        deleteCustomer: async (_, { id }) => {
 
             // Find and delete the customer
-            const customer = await Customer.findOne({ _id: id, businessId });
+            const customer = await Customer.findOne({ _id: id });
 
             if (!customer) {
                 throw new Error("Customer not found or unauthorized");
