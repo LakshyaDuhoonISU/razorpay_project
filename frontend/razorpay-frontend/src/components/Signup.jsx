@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // useNavigate for React Router v6
-import { Link } from 'react-router-dom'; // Link component from React Router
-import styles from './Signup.module.css'; // Update the CSS module as necessary
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import styles from './Signup.module.css'; 
 
 const Signup = () => {
     const [businessName, setBusinessName] = useState('');
@@ -11,7 +11,7 @@ const Signup = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [toastMessage, setToastMessage] = useState({ error: false, message: '' });
-    const navigate = useNavigate(); // Use navigate instead of useHistory
+    const navigate = useNavigate(); 
 
     // Reset Toast Message after 5 seconds
     const resetToast = () => {
@@ -83,7 +83,7 @@ const Signup = () => {
                     {toastMessage.message}
                 </div>
             )}
-
+            <h2 className={styles.title}>FlashPay</h2>
             <form className={styles.form} onSubmit={handleSubmit}>
                 <h2 className={styles.title}>Register</h2>
 

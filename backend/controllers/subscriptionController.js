@@ -7,7 +7,7 @@ import Business from '../models/Business.js';
 // Create a new subscription
 export const createSubscription = async (req, res) => {
     try {
-        const { customerId, planId, price, startDate, endDate, businessId } = req.body;
+        const { customerId, planId, price, startDate, endDate, status, businessId } = req.body;
 
         // Validate customerId and ensure the customer belongs to the authenticated business
         if (!mongoose.Types.ObjectId.isValid(customerId)) {
@@ -25,6 +25,11 @@ export const createSubscription = async (req, res) => {
             return res.status(403).send({ message: "Unauthorized to create subscription for this customer" });
         }
 
+        const business = await Business.findOne({ _id: businessId });
+        if (!business) {
+            return res.status(404).send({ message: "Business not found" });
+        }
+
         // Create the subscription and associate it with the authenticated business
         const subscription = await Subscription.create({
             customerId,
@@ -32,6 +37,7 @@ export const createSubscription = async (req, res) => {
             price,
             startDate,
             endDate,
+            status,
             businessId: businessId // Use authenticated business ID
         });
 

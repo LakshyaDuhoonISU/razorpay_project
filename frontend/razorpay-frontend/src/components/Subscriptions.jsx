@@ -8,26 +8,25 @@ import { gql } from 'graphql-tag';
 import styles from './Subscriptions.module.css';
 
 // GraphQL mutations for update and delete subscription
-// const UPDATE_SUBSCRIPTION = gql`
-//   mutation UpdateSubscription($id: ID!, $planId: ID, $price: Float, $startDate: String, $endDate: String, $status: String, $method: String) {
-//     updateSubscription(id: $id, planId: $planId, price: $price, startDate: $startDate, endDate: $endDate, status: $status, method: $method) {
-//       id
-//       customerId
-//       planId
-//       price
-//       startDate
-//       endDate
-//       status
-//       method
-//     }
-//   }
-// `;
-
-const DELETE_SUBSCRIPTION = gql`
-  mutation DeleteSubscription($id: ID!) {
-    deleteSubscription(id: $id)
+const UPDATE_SUBSCRIPTION = gql`
+  mutation UpdateSubscription($id: ID!, $planId: ID, $price: Float, $startDate: String, $endDate: String, $status: String) {
+    updateSubscription(id: $id, planId: $planId, price: $price, startDate: $startDate, endDate: $endDate, status: $status) {
+      id
+      customerId
+      planId
+      price
+      startDate
+      endDate
+      status
+    }
   }
 `;
+
+// const DELETE_SUBSCRIPTION = gql`
+//   mutation DeleteSubscription($id: ID!) {
+//     deleteSubscription(id: $id)
+//   }
+// `;
 
 function Subscriptions() {
     const { idToken, businessId } = useAuth();
@@ -42,16 +41,17 @@ function Subscriptions() {
         price: '',
         startDate: '',
         endDate: '',
+        status: 'active',
         businessId: businessId,
     });
     const [toastMessage, setToastMessage] = useState('');
     const [toastError, setToastError] = useState(false);
 
-    // const [updateSubscription] = useMutation(UPDATE_SUBSCRIPTION);
-    const [deleteSubscription] = useMutation(DELETE_SUBSCRIPTION);
+    const [updateSubscription] = useMutation(UPDATE_SUBSCRIPTION);
+    // const [deleteSubscription] = useMutation(DELETE_SUBSCRIPTION);
 
     const [openDialog, setOpenDialog] = useState(false);
-    const [subscriptionToDelete, setSubscriptionToDelete] = useState(null);
+    // const [subscriptionToDelete, setSubscriptionToDelete] = useState(null);
 
     useEffect(() => {
         const storedBusinessId = localStorage.getItem('businessId');
@@ -138,13 +138,33 @@ function Subscriptions() {
         }
     };
 
+    // Handle start date change
+    const handleStartDateChange = (startDate) => {
+        const selectedPlan = plans.find((plan) => plan._id === formData.planId);
+        const duration = selectedPlan ? selectedPlan.duration : 0; // Assume `duration` is in days
+        const calculatedEndDate = startDate
+            ? new Date(new Date(startDate).setDate(new Date(startDate).getDate() + duration)).toISOString().split('T')[0]
+            : '';
+
+        setFormData({
+            ...formData,
+            startDate,
+            endDate: calculatedEndDate, // Automatically calculate the end date
+        });
+    };
+
     // Handle plan change: update price when a plan is selected
     const handlePlanChange = (planId) => {
         const selectedPlan = plans.find((plan) => plan._id === planId);
+        const duration = selectedPlan ? selectedPlan.duration : 0; // Assume `duration` is in days
+        const calculatedEndDate = formData.startDate
+            ? new Date(new Date(formData.startDate).setDate(new Date(formData.startDate).getDate() + duration)).toISOString().split('T')[0]
+            : '';
         setFormData({
             ...formData,
             planId,
             price: selectedPlan ? selectedPlan.price : '', // Set price from the selected plan
+            endDate: calculatedEndDate, // Automatically calculate the end date
         });
     };
 
@@ -170,6 +190,7 @@ function Subscriptions() {
                     price: '',
                     startDate: '',
                     endDate: '',
+                    status: 'active',
                     businessId: businessId,
                 });
                 setShowForm(false);
@@ -194,73 +215,31 @@ function Subscriptions() {
         }
     };
 
-    // // Handle update subscription
-    // const handleUpdateSubscription = async () => {
-    //     try {
-    //         const { data } = await updateSubscription({
-    //             variables: {
-    //                 id: formData._id,
-    //                 planId: formData.planId,
-    //                 price: parseFloat(formData.price),
-    //                 startDate: formData.startDate,
-    //                 endDate: formData.endDate,
-    //                 status: formData.status,
-    //                 method: formData.method,
-    //             },
-    //         });
-
-    //         setSubscriptions(subscriptions.map(subscription => subscription._id === formData._id ? data.updateSubscription : subscription));
-    //         fetchSubscriptions(); // Refetch subscriptions
-    //         setToastMessage('Subscription updated successfully!');
-    //         setToastError(false);
-    //         setShowForm(false);
-    //         setTimeout(() => {
-    //             setToastMessage('');
-    //         }, 5000);
-    //     } catch (error) {
-    //         console.error('Error updating subscription:', error);
-    //         setToastMessage('Failed to update subscription');
-    //         setToastError(true);
-    //         setTimeout(() => {
-    //             setToastMessage('');
-    //         }, 5000);
-    //     }
-    // };
-
-    // // Handle edit subscription logic
-    // const handleEditSubscription = (subscriptionId) => {
-    //     const subscriptionToEdit = subscriptions.find((subscription) => subscription._id === subscriptionId);
-    //     setFormData({
-    //         ...subscriptionToEdit,
-    //         startDate: subscriptionToEdit.startDate ? new Date(subscriptionToEdit.startDate).toLocaleDateString() : '',
-    //         endDate: subscriptionToEdit.endDate ? new Date(subscriptionToEdit.endDate).toLocaleDateString() : '',
-    //     });
-    //     setShowForm(true);
-    // };
-
-    // Handle delete subscription with confirmation dialog
-    const openConfirmationDialog = (subscriptionId) => {
-        setSubscriptionToDelete(subscriptionId);
-        setOpenDialog(true); // Open the confirmation dialog
-    };
-
-    const handleDeleteSubscription = async () => {
+    // Handle update subscription
+    const handleUpdateSubscription = async () => {
         try {
-            await deleteSubscription({
-                variables: { id: subscriptionToDelete },
+            const { data } = await updateSubscription({
+                variables: {
+                    id: formData._id,
+                    // planId: formData.planId,
+                    // price: parseFloat(formData.price),
+                    // startDate: formData.startDate,
+                    // endDate: formData.endDate,
+                    status: 'cancelled'
+                },
             });
 
-            setSubscriptions(subscriptions.filter((subscription) => subscription._id !== subscriptionToDelete));
-            setToastMessage('Subscription deleted successfully!');
+            setSubscriptions(subscriptions.map(subscription => subscription._id === formData._id ? data.updateSubscription : subscription));
+            fetchSubscriptions(); // Refetch subscriptions
+            setToastMessage('Subscription updated successfully!');
             setToastError(false);
+            setShowForm(false);
             setTimeout(() => {
                 setToastMessage('');
             }, 5000);
-
-            setOpenDialog(false); // Close the dialog
         } catch (error) {
-            console.error('Error deleting subscription:', error);
-            setToastMessage('Failed to delete subscription');
+            console.error('Error updating subscription:', error.message);
+            setToastMessage('Failed to update subscription');
             setToastError(true);
             setTimeout(() => {
                 setToastMessage('');
@@ -268,8 +247,77 @@ function Subscriptions() {
         }
     };
 
+    const handleEditSubscription = (subscriptionId) => {
+        const subscriptionToEdit = subscriptions.find((subscription) => subscription._id === subscriptionId);
+        setFormData({
+            ...subscriptionToEdit,
+        });
+
+        setOpenDialog(true); // Show confirmation dialog
+    };
+
+    // Inside the confirmation dialog handler:
+    const confirmCancelSubscription = async () => {
+        try {
+            console.log("Mutation Input:", { id: formData._id, status: 'cancelled' });
+            const { data } = await updateSubscription({
+                variables: {
+                    id: formData._id, // Only id and status are sent
+                    status: 'cancelled',
+                },
+            });
+
+            // Update the local state
+            setSubscriptions(subscriptions.map((subscription) =>
+                subscription._id === formData._id
+                    ? { ...subscription, status: 'cancelled' }
+                    : subscription
+            ));
+            setToastMessage('Subscription cancelled successfully!');
+            setToastError(false);
+        } catch (error) {
+            console.error('Error cancelling subscription:', error.message);
+            setToastMessage('Failed to cancel subscription');
+            setToastError(true);
+        } finally {
+            setOpenDialog(false); // Close dialog
+            setTimeout(() => setToastMessage(''), 5000);
+        }
+    };
+
+
+    // // Handle delete subscription with confirmation dialog
+    // const openConfirmationDialog = (subscriptionId) => {
+    //     setSubscriptionToDelete(subscriptionId);
+    //     setOpenDialog(true); // Open the confirmation dialog
+    // };
+
+    // const handleDeleteSubscription = async () => {
+    //     try {
+    //         await deleteSubscription({
+    //             variables: { id: subscriptionToDelete },
+    //         });
+
+    //         setSubscriptions(subscriptions.filter((subscription) => subscription._id !== subscriptionToDelete));
+    //         setToastMessage('Subscription deleted successfully!');
+    //         setToastError(false);
+    //         setTimeout(() => {
+    //             setToastMessage('');
+    //         }, 5000);
+
+    //         setOpenDialog(false); // Close the dialog
+    //     } catch (error) {
+    //         console.error('Error deleting subscription:', error);
+    //         setToastMessage('Failed to delete subscription');
+    //         setToastError(true);
+    //         setTimeout(() => {
+    //             setToastMessage('');
+    //         }, 5000);
+    //     }
+    // };
+
     const cancelDelete = () => {
-        setOpenDialog(false); // Close the dialog without deleting
+        setOpenDialog(false); // Close the dialog without cancelling
     };
 
     const toggleDrawer = (open) => () => {
@@ -349,18 +397,25 @@ function Subscriptions() {
                         <input
                             type="date"
                             value={formData.startDate}
-                            onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                            onChange={(e) => handleStartDateChange(e.target.value)}
                             required
                         />
                         <input
                             type="date"
                             value={formData.endDate}
-                            onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                            // onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                            readOnly
                         />
                         <input
                             type="number"
                             placeholder="Price"
                             value={formData.price}
+                            readOnly
+                        />
+                        <input
+                            type="text"
+                            placeholder="active"
+                            value={formData.status}
                             readOnly
                         />
                         <button type="submit" className={styles.saveButton}>
@@ -390,12 +445,18 @@ function Subscriptions() {
                             <p>
                                 <strong>Price: $</strong> {subscription.price || "Unknown"}
                             </p>
-                            {/* <button onClick={() => handleEditSubscription(subscription._id)} className={styles.editButton}>
-                                Edit
-                            </button> */}
-                            <button onClick={() => openConfirmationDialog(subscription._id)} className={styles.deleteButton}>
+                            <p>
+                                <strong>Status: </strong> {subscription.status || "Active"}
+                            </p>
+                            {/* Show the cancel button only if the status is "active" */}
+                            {subscription.status === 'active' && (
+                                <button onClick={() => handleEditSubscription(subscription._id)} className={styles.deleteButton}>
+                                    Cancel
+                                </button>
+                            )}
+                            {/* <button onClick={() => openConfirmationDialog(subscription._id)} className={styles.deleteButton}>
                                 Delete
-                            </button>
+                            </button> */}
                         </li>
                     ))}
                 </ul>
@@ -403,16 +464,16 @@ function Subscriptions() {
 
             {/* Confirmation Dialog */}
             <Dialog open={openDialog} onClose={cancelDelete}>
-                <DialogTitle>Confirm Deletion</DialogTitle>
+                <DialogTitle>Confirm Cancellation</DialogTitle>
                 <DialogContent>
-                    <p>Are you sure you want to delete this subscription?</p>
+                    <p>Are you sure you want to cancel this subscription?</p>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={cancelDelete} color="primary">
-                        Cancel
+                        No
                     </Button>
-                    <Button onClick={handleDeleteSubscription} color="secondary">
-                        Confirm
+                    <Button onClick={confirmCancelSubscription} color="secondary">
+                        Yes, Cancel
                     </Button>
                 </DialogActions>
             </Dialog>

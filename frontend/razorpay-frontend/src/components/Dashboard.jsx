@@ -9,7 +9,7 @@ import { gql } from 'graphql-tag';
 
 function Dashboard() {
     const { idToken, logout, updateBusinessId } = useAuth(); // Access token and logout function from context
-    const navigate = useNavigate(); // Used for programmatic navigation
+    const navigate = useNavigate();
     const [userData, setUserData] = useState({});
     const [drawerOpen, setDrawerOpen] = useState(false); // State to toggle Drawer
     const [isEditing, setIsEditing] = useState(false); // Track whether we're editing the profile

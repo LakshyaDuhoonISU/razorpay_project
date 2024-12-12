@@ -31,6 +31,11 @@ const SubscriptionSchema = new mongoose.Schema({
             message: 'End date must be after the start date.'
         }
     },
+    status: {
+        type: String,
+        enum: ['active', 'cancelled','pending'],
+        default: 'active'
+    },
     businessId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Business',

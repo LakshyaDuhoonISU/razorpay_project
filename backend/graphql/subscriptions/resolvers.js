@@ -8,37 +8,45 @@ export const subscriptionResolvers = {
     },
     Mutation: {
         // Update subscription details
-        // updateSubscription: async (_, { id, planId, price, startDate, endDate }) => {
-        //     // Check if the subscription exists and belongs to the business
+        updateSubscription: async (_, { id, planId, price, startDate, endDate, status }) => {
+            try {
+                const subscription = await Subscription.findById(id);
+                if (!subscription) {
+                    throw new Error("Subscription not found or unauthorized");
+                }
+        
+                if (subscription.status === 'cancelled' && status !== 'cancelled') {
+                    throw new Error("Cancelled subscriptions cannot be modified");
+                }
+        
+                const updates = {};
+                if (planId) updates.planId = planId;
+                if (price !== undefined) updates.price = price;
+                if (startDate) updates.startDate = startDate;
+                if (endDate) updates.endDate = endDate;
+                if (status) updates.status = status;
+        
+                const updatedSubscription = await Subscription.findByIdAndUpdate(id, updates, { new: true });
+                if (!updatedSubscription) {
+                    throw new Error("Failed to update subscription");
+                }
+        
+                return updatedSubscription;
+            } catch (error) {
+                console.error("Error in updateSubscription:", error.message);
+                throw new Error(error.message);
+            }
+        },        
+
+        // // Delete a subscription
+        // deleteSubscription: async (_, { id }) => {
         //     const subscription = await Subscription.findOne({ _id: id });
         //     if (!subscription) {
         //         throw new Error("Subscription not found or unauthorized");
         //     }
 
-        //     // Ensure the provided planId exists and belongs to the business
-        //     const plan = await Plan.findOne({ _id: planId });
-        //     if (!plan) {
-        //         throw new Error("Plan not found or unauthorized");
-        //     }
-
-        //     // Update subscription with the new details
-        //     const updatedSubscription = await Subscription.findByIdAndUpdate(
-        //         id,
-        //         { planId, price, startDate, endDate },
-        //         { new: true }
-        //     );
-        //     return updatedSubscription;
-        // },
-
-        // Delete a subscription
-        deleteSubscription: async (_, { id }) => {
-            const subscription = await Subscription.findOne({ _id: id });
-            if (!subscription) {
-                throw new Error("Subscription not found or unauthorized");
-            }
-
-            await Subscription.findByIdAndDelete(id);
-            return "Subscription deleted successfully";
-        }
+        //     await Subscription.findByIdAndDelete(id);
+        //     return "Subscription deleted successfully";
+        // }
     }
 };

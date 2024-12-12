@@ -48,7 +48,7 @@ function Login() {
                     {toastMessage.message}
                 </div>
             )}
-
+            <h2 className={styles.title}>FlashPay</h2>
             <form className={styles.form} onSubmit={handleSubmit}>
                 <h2 className={styles.title}>Login</h2>
 

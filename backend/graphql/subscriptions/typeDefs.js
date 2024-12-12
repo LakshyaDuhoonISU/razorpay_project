@@ -9,6 +9,7 @@ export const subscriptionTypeDefs = gql`
         startDate: String
         endDate: String
         businessId: ID!
+        status: String!
         createdAt: String
         updatedAt: String
     }
@@ -24,6 +25,7 @@ export const subscriptionTypeDefs = gql`
             price: Float
             startDate: String
             endDate: String
+            status: String
         ): Subscription!
         deleteSubscription(id: ID!): String!
     }
