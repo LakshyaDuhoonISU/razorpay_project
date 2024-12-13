@@ -12,6 +12,7 @@ import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { typeDefs, resolvers } from './graphql/index.js';
 import admin from './firebase.cjs';
+import generateUPIQR from './qrcode.cjs';
 
 // connect to database
 connectDB();
@@ -22,6 +23,17 @@ app.use(express.json());
 
 // enable cors (to allow requests from frontend)
 app.use(cors());
+
+// QR code generation
+app.post('/generate-qr', async (req, res) => {
+    const { upiId, name, amount } = req.body;
+    try {
+        const qrCode = await generateUPIQR(upiId, name, amount);
+        res.status(200).json({ qrCode });
+    } catch (error) {
+        res.status(500).send('Error generating QR code');
+    }
+});
 
 // auth route
 app.use('/api/businesses', businessRoutes);

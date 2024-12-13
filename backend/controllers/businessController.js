@@ -1,5 +1,6 @@
 import Business from '../models/Business.js';
 import admin from '../firebase.cjs'; // Firebase Admin SDK initialization
+import { session } from '../neo4j.cjs';
 
 // Register a new business
 export const registerBusiness = async (req, res) => {
@@ -42,6 +43,16 @@ export const registerBusiness = async (req, res) => {
 
                 await newBusiness.save();
 
+                try {
+                    // Add Neo4j node
+                    await session.run(
+                        `CREATE (b:Business {id: $firebaseUid, name: $name, email: $email, phone: $phone, address: $address}) RETURN b`,
+                        { firebaseUid: userRecord.uid, name, email, phone, address }
+                    );
+                } catch (neo4jerr) {
+                    console.error("Neo4j error: ", neo4jerr);
+                }
+
                 return res.status(201).json({
                     message: 'Business registered in MongoDB successfully (from existing Firebase account)',
                     business: { name, email, phone, address },
@@ -62,6 +73,16 @@ export const registerBusiness = async (req, res) => {
         });
 
         await business.save();
+
+        try {
+            // Add Neo4j node
+            await session.run(
+                `CREATE (b:Business {id: $firebaseUid, name: $name, email: $email, phone: $phone, address: $address}) RETURN b`,
+                { firebaseUid: userRecord.uid, name, email, phone, address }
+            );
+        } catch (neo4jerr) {
+            console.error("Neo4j error: ", neo4jerr);
+        }
 
         res.status(201).json({
             message: 'Business registered successfully',
@@ -127,53 +148,3 @@ export const getBusinessProfile = async (req, res) => {
         res.status(500).send({ error: err.message });
     }
 };
-
-// import Business from "../models/Business.js";
-// import { SECRET_KEY } from "../constants.js";
-// import jwt from "jsonwebtoken";
-// import bcrypt from "bcryptjs";
-
-// export const registerBusiness = async (req, res) => {
-//     try {
-//         const { name, email, phone, address, password } = req.body;
-
-//         const existingBusiness = await Business.findOne({ email });
-//         if (existingBusiness) {
-//             return res.status(400).send({ error: 'Email is already registered' });
-//         }
-
-//         // Encrypt password
-//         const salt = await bcrypt.genSalt(10);
-//         const hashedPassword = await bcrypt.hash(password, salt);
-
-//         await Business.create({ name, email, phone, address, password: hashedPassword });
-//         res.status(201).send({ message: 'Business registered successfully' });
-//     } catch (err) {
-//         res.status(500).send({ error: err.message });
-//     }
-// };
-
-// export const loginBusiness = async (req, res) => {
-//     try {
-//         const { email, password } = req.body;
-
-//         const business = await Business.findOne({ email });
-//         if (!business) {
-//             return res.status(400).send({ error: 'Invalid email or password' });
-//         }
-
-//         const isMatch = await bcrypt.compare(password, business.password);
-//         if (!isMatch) {
-//             return res.status(400).send({ error: 'Invalid email or password' });
-//         }
-
-//         // Generate JWT token
-//         const token = jwt.sign({ id: business._id, email: business.email }, SECRET_KEY, {
-//             expiresIn: '1d',
-//         });
-
-//         res.status(200).send({ token, message: 'Login successful' });
-//     } catch (err) {
-//         res.status(500).send({ error: err.message });
-//     }
-// };

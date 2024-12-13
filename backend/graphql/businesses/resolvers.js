@@ -4,6 +4,7 @@ import Plan from "../../models/Plans.js";
 import Transaction from "../../models/Transactions.js";
 import Subscription from "../../models/Subscriptions.js";
 import admin from '../../firebase.cjs'
+import { session } from "../../neo4j.cjs";
 
 export const businessResolvers = {
     Query: {
@@ -15,6 +16,27 @@ export const businessResolvers = {
             // if (id !== businessId) {
             //     throw new Error("Unauthorized: Cannot delete another business's profile");
             // }
+
+            const business = await Business.findById(id);
+            const firebaseUid = business.firebaseUid;
+
+            try {
+                await session.run(
+                    `
+                MATCH (b:Business {id: $firebaseUid})
+                SET b.name = $name, b.phone = $phone, b.address = $address
+                RETURN b
+                `,
+                    {
+                        firebaseUid,
+                        name,
+                        phone,
+                        address
+                    }
+                );
+            } catch (neo4jerr) {
+                console.error("Neo4j error: ", neo4jerr);
+            }
 
             // Find business by id and update
             const updatedBusiness = await Business.findByIdAndUpdate(
@@ -49,6 +71,21 @@ export const businessResolvers = {
             } catch (error) {
                 console.error("Error deleting user from Firebase:", error);
                 throw new Error("Failed to delete user from Firebase");
+            }
+
+            try {
+                await session.run(
+                    `
+                    MATCH (b:Business {id: $firebaseUid})
+                    OPTIONAL MATCH (c:Customer)-[r:TRANSACTED_WITH]->(b)
+                    DELETE r
+                    DETACH DELETE c
+                    DELETE b
+                    `,
+                    { firebaseUid: business.firebaseUid }
+                );
+            } catch (neo4jerr) {
+                console.error("Neo4j error: ", neo4jerr);
             }
 
             // Delete transactions associated with the business's customers

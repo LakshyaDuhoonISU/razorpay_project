@@ -1,4 +1,5 @@
 import Customer from "../../models/Customers.js";
+import { session } from "../../neo4j.cjs";
 
 export const customerResolvers = {
     Query: {
@@ -20,6 +21,19 @@ export const customerResolvers = {
                 { new: true }
             );
 
+            try {
+                await session.run(
+                    `
+                    MATCH (c:Customer {id: $id})
+                    SET c.name = $name, c.email = $email, c.phone = $phone
+                    RETURN c
+                    `,
+                    { id, name, email, phone }
+                );
+            } catch (error) {
+                console.error("Neo4j error: ", error);
+            }
+
             return updatedCustomer;
         },
 
@@ -31,6 +45,18 @@ export const customerResolvers = {
 
             if (!customer) {
                 throw new Error("Customer not found or unauthorized");
+            }
+
+            try {
+                await session.run(
+                    `
+                    MATCH (c:Customer {id: $id})
+                    DETACH DELETE c
+                    `,
+                    { id }
+                );
+            } catch (error) {
+                console.error("Neo4j error: ", error);
             }
 
             await Customer.findByIdAndDelete(id);

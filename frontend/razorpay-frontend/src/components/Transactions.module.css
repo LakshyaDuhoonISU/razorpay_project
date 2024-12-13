@@ -1,116 +1,116 @@
-.toastError {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: #f44336;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  font-size: 16px;
-  z-index: 1000;
-}
-
-.toastSuccess {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: #4caf50;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  font-size: 16px;
-  z-index: 1000;
-}
-
+/* Main container styling */
 .container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 80px;
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+  padding-top: 80px; /* To account for AppBar */
 }
 
-.addButton {
-  background-color: #4caf50;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-bottom: 20px;
-}
-
-.addButton:hover {
-  background-color: #43a047;
-}
-
+/* Content box styling */
 .content {
-  width: 80%;
-  max-width: 900px;
-  margin: auto;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Heading styling */
+h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
   text-align: center;
 }
 
-.form {
-  margin: 20px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+/* No transactions text */
+.noTransactions {
+  font-size: 18px;
+  color: #666;
+  text-align: center;
+  margin-top: 20px;
 }
 
-.form input,
-.form select,
-.form button {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 14px;
+/* Table styling */
+.transactionTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-size: 16px;
+  text-align: left;
 }
 
-.form .saveButton {
-  background-color: #4caf50;
-  color: white;
-  cursor: pointer;
+/* Table header styling */
+.transactionTable thead tr {
+  background-color: #007bff;
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: bold;
 }
 
-.form .saveButton:hover {
-  background-color: #43a047;
+/* Table header cell styling */
+.transactionTable th {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
 }
 
-.form .cancelButton {
-  background-color: #f44336;
-  color: white;
-  cursor: pointer;
+/* Table row styling */
+.transactionTable tbody tr {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  transition: background-color 0.2s ease;
 }
 
-.form .cancelButton:hover {
-  background-color: #e53935;
+/* Alternate row background color */
+.transactionTable tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
 }
 
-.transactionList {
-  list-style-type: none;
+/* Row hover effect */
+.transactionTable tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Table data cell styling */
+.transactionTable td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  color: #333;
+}
+
+/* Sidebar list styling */
+.MuiList-root {
   padding: 0;
 }
 
-.transactionItem {
-  background-color: #f9f9f9;
-  padding: 20px;
-  margin: 10px 0;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+.MuiListItemText-root {
+  font-size: 16px;
+  color: #007bff;
 }
 
-.deleteButton {
-  background-color: #f44336;
-  color: white;
+.MuiListItemText-root:hover {
+  text-decoration: underline;
 }
 
-.deleteButton:hover {
-  background-color: #e53935;
-}
+/* Responsive styling */
+@media (max-width: 768px) {
+  .content {
+      padding: 10px;
+  }
 
-.noSubs {
-  font-size: 20px;
-  font-weight: bold;
+  h2 {
+      font-size: 20px;
+  }
+
+  .transactionTable {
+      font-size: 14px;
+  }
+
+  .transactionTable th,
+  .transactionTable td {
+      padding: 8px 10px;
+  }
 }

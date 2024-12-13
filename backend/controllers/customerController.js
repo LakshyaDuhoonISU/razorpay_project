@@ -2,12 +2,33 @@ import mongoose from "mongoose";
 import Customer from "../models/Customers.js";
 import Transaction from "../models/Transactions.js";
 import Business from "../models/Business.js";
+import { session } from "../neo4j.cjs";
 
 // Create a new customer
 export const createCustomer = async (req, res) => {
     try {
         const customer = await Customer.create(req.body);
         const fullCustomer = await Customer.findById(customer._id).select("-__v"); // Fetch the full customer object
+
+        // Step 2: Add the customer node to Neo4j
+        try {
+            await session.run(
+                `
+            CREATE (c:Customer {id: $customerId, name: $name, email: $email, phone: $phone, businessId: $businessId})
+            RETURN c
+            `,
+                {
+                    customerId: customer._id.toString(),
+                    name: customer.name,
+                    email: customer.email,
+                    phone: customer.phone,
+                    businessId: customer.businessId.toString(),
+                }
+            );
+        } catch (neo4jerr) {
+            console.error("Neo4j error: ", neo4jerr);
+        }
+
         res.status(201).send({ message: "Customer created successfully", data: fullCustomer });
     } catch (err) {
         if (err.code === 11000) { // Handle duplicate key error

@@ -33,7 +33,7 @@ const SubscriptionSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['active', 'cancelled','pending'],
+        enum: ['active', 'cancelled'],
         default: 'active'
     },
     businessId: {

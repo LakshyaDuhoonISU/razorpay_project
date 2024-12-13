@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { Box, Drawer, List, ListItem, ListItemText, IconButton, AppBar, Toolbar, Typography, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { gql } from 'graphql-tag';
 import styles from './Subscriptions.module.css';
@@ -22,12 +22,6 @@ const UPDATE_SUBSCRIPTION = gql`
   }
 `;
 
-// const DELETE_SUBSCRIPTION = gql`
-//   mutation DeleteSubscription($id: ID!) {
-//     deleteSubscription(id: $id)
-//   }
-// `;
-
 function Subscriptions() {
     const { idToken, businessId } = useAuth();
     const [subscriptions, setSubscriptions] = useState([]);
@@ -46,12 +40,11 @@ function Subscriptions() {
     });
     const [toastMessage, setToastMessage] = useState('');
     const [toastError, setToastError] = useState(false);
+    const navigate = useNavigate();
 
     const [updateSubscription] = useMutation(UPDATE_SUBSCRIPTION);
-    // const [deleteSubscription] = useMutation(DELETE_SUBSCRIPTION);
 
     const [openDialog, setOpenDialog] = useState(false);
-    // const [subscriptionToDelete, setSubscriptionToDelete] = useState(null);
 
     useEffect(() => {
         const storedBusinessId = localStorage.getItem('businessId');
@@ -184,6 +177,7 @@ function Subscriptions() {
                 setSubscriptions((prevSubscriptions) => [...prevSubscriptions, data.data]);
                 setToastMessage('Subscription added successfully!');
                 setToastError(false);
+                // Navigate to the payment form after subscription is added
                 setFormData({
                     customerId: '',
                     planId: '',
@@ -194,6 +188,16 @@ function Subscriptions() {
                     businessId: businessId,
                 });
                 setShowForm(false);
+                navigate('/payment', {
+                    state: {
+                        subscriptionId: data.data._id,
+                        amount: data.data.price,
+                        customerId: data.data.customerId,
+                        planId: data.data.planId,
+                        businessId
+                        // handlePaymentCallback, // Pass the callback for updating subscription status
+                    },
+                });
                 setTimeout(() => {
                     setToastMessage('');
                 }, 5000);
@@ -215,16 +219,28 @@ function Subscriptions() {
         }
     };
 
+    // const handlePaymentCallback = async (subscriptionId, status) => {
+    //     try {
+    //         const { data } = await updateSubscription({
+    //             variables: {
+    //                 id: subscriptionId,
+    //                 status: status,
+    //             },
+    //         });
+    //         setSubscriptions(subscriptions.map(subscription => subscription._id === subscriptionId ? data.updateSubscription : subscription));
+    //         fetchSubscriptions(); // Refetch subscriptions
+    //         setShowForm(false);
+    //     } catch (error) {
+    //         console.error('Error updating subscription:', error.message);
+    //     }
+    // };
+
     // Handle update subscription
     const handleUpdateSubscription = async () => {
         try {
             const { data } = await updateSubscription({
                 variables: {
                     id: formData._id,
-                    // planId: formData.planId,
-                    // price: parseFloat(formData.price),
-                    // startDate: formData.startDate,
-                    // endDate: formData.endDate,
                     status: 'cancelled'
                 },
             });
@@ -284,37 +300,6 @@ function Subscriptions() {
             setTimeout(() => setToastMessage(''), 5000);
         }
     };
-
-
-    // // Handle delete subscription with confirmation dialog
-    // const openConfirmationDialog = (subscriptionId) => {
-    //     setSubscriptionToDelete(subscriptionId);
-    //     setOpenDialog(true); // Open the confirmation dialog
-    // };
-
-    // const handleDeleteSubscription = async () => {
-    //     try {
-    //         await deleteSubscription({
-    //             variables: { id: subscriptionToDelete },
-    //         });
-
-    //         setSubscriptions(subscriptions.filter((subscription) => subscription._id !== subscriptionToDelete));
-    //         setToastMessage('Subscription deleted successfully!');
-    //         setToastError(false);
-    //         setTimeout(() => {
-    //             setToastMessage('');
-    //         }, 5000);
-
-    //         setOpenDialog(false); // Close the dialog
-    //     } catch (error) {
-    //         console.error('Error deleting subscription:', error);
-    //         setToastMessage('Failed to delete subscription');
-    //         setToastError(true);
-    //         setTimeout(() => {
-    //             setToastMessage('');
-    //         }, 5000);
-    //     }
-    // };
 
     const cancelDelete = () => {
         setOpenDialog(false); // Close the dialog without cancelling
@@ -454,9 +439,6 @@ function Subscriptions() {
                                     Cancel
                                 </button>
                             )}
-                            {/* <button onClick={() => openConfirmationDialog(subscription._id)} className={styles.deleteButton}>
-                                Delete
-                            </button> */}
                         </li>
                     ))}
                 </ul>

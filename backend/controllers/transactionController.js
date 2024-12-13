@@ -3,6 +3,7 @@ import Transaction from "../models/Transactions.js";
 import Customer from "../models/Customers.js";
 import Business from "../models/Business.js";
 import Plan from "../models/Plans.js";
+import { session } from "../neo4j.cjs";
 
 // Helper function to validate MongoDB ObjectId
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
@@ -10,7 +11,7 @@ const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 // Create a new transaction
 export const createTransaction = async (req, res) => {
     try {
-        const { customerId, planId, date, status, businessId } = req.body;
+        const { customerId, planId, date, status, amount, method, businessId } = req.body;
 
         // Validate customerId
         if (!isValidObjectId(customerId)) {
@@ -23,12 +24,40 @@ export const createTransaction = async (req, res) => {
             return res.status(403).send({ message: "Unauthorized to create transaction for this customer" });
         }
 
+        // Get the business using its firebaseUid (since that's what you're using in MongoDB)
+        const business = await Business.findById(businessId);
+
+        if (!business) {
+            return res.status(404).send({ message: "Business not found" });
+        }
+
+        // Use Firebase UID as business identifier for Neo4j
+        const firebaseUid = business.firebaseUid;
+
         // Create the transaction and associate it with the business
-        const transaction = await Transaction.create({ customerId, planId, status, date, businessId: businessId });
+        const transaction = await Transaction.create({ customerId, planId, status, date, amount, method, businessId });
+
+        let transactionDate = new Date().toISOString();
 
         const fullTransaction = await Transaction.findById(transaction._id)
             .populate('customerId', 'name')
             .populate('planId', 'name');
+
+        // Create or update a Transaction relationship
+        try {
+            await session.run(
+                `
+            MATCH (c:Customer {id: $customerId})
+            MATCH (b:Business {id: $firebaseUid})
+            MERGE (c)-[r:TRANSACTED_WITH]->(b)
+            SET r.amount = $amount, r.date = $transactionDate, r.method = $method, r.status = $status
+            RETURN r
+            `,
+                { customerId, firebaseUid, amount, transactionDate, method, status }
+            );
+        } catch (neo4jerr) {
+            console.error("Neo4j error: ", neo4jerr);
+        }
 
         res.status(201).send({ message: "Transaction created successfully", data: fullTransaction });
     } catch (err) {

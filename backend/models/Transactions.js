@@ -20,18 +20,6 @@ const TransactionSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    razorpay_order_id: {
-        type: String,
-        required: true,
-    },
-    razorpay_payment_id: {
-        type: String,
-        required: true,
-    },
-    razorpay_signature: {
-        type: String,
-        required: true,
-    },
     status: {
         type: String,
         required:true
