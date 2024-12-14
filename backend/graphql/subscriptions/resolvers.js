@@ -37,16 +37,5 @@ export const subscriptionResolvers = {
                 throw new Error(error.message);
             }
         },        
-
-        // // Delete a subscription
-        // deleteSubscription: async (_, { id }) => {
-        //     const subscription = await Subscription.findOne({ _id: id });
-        //     if (!subscription) {
-        //         throw new Error("Subscription not found or unauthorized");
-        //     }
-
-        //     await Subscription.findByIdAndDelete(id);
-        //     return "Subscription deleted successfully";
-        // }
     }
 };

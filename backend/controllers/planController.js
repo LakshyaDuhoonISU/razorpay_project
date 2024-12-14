@@ -19,7 +19,7 @@ export const createPlan = async (req, res) => {
             description,
             price,
             duration,
-            businessId, // Use the existing businessId directly
+            businessId,
         });
 
         res.status(201).json({ message: "Plan created successfully", data: plan });

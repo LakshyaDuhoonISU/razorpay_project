@@ -13,10 +13,6 @@ export const businessResolvers = {
     Mutation: {
         // Update business profile
         updateBusiness: async (_, { id, name, email, phone, address }) => {
-            // if (id !== businessId) {
-            //     throw new Error("Unauthorized: Cannot delete another business's profile");
-            // }
-
             const business = await Business.findById(id);
             const firebaseUid = business.firebaseUid;
 
@@ -54,10 +50,6 @@ export const businessResolvers = {
 
         // Delete business profile with cascading deletes
         deleteBusiness: async (_, { id }) => {
-            // if (id !== businessId) {
-            //     throw new Error("Unauthorized: Cannot delete another business's profile");
-            // }
-
             // Find the business to delete
             const business = await Business.findById(id);
 

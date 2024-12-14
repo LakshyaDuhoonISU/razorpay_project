@@ -38,7 +38,7 @@ export const createSubscription = async (req, res) => {
             startDate,
             endDate,
             status,
-            businessId: businessId // Use authenticated business ID
+            businessId: businessId
         });
 
         const fullSubscription = await Subscription.findById(subscription._id)

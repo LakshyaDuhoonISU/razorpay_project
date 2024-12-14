@@ -24,7 +24,7 @@ export const createTransaction = async (req, res) => {
             return res.status(403).send({ message: "Unauthorized to create transaction for this customer" });
         }
 
-        // Get the business using its firebaseUid (since that's what you're using in MongoDB)
+        // Get the business using its firebaseUid
         const business = await Business.findById(businessId);
 
         if (!business) {
