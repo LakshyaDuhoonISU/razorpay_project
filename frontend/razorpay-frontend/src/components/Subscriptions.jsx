@@ -134,7 +134,7 @@ function Subscriptions() {
     // Handle start date change
     const handleStartDateChange = (startDate) => {
         const selectedPlan = plans.find((plan) => plan._id === formData.planId);
-        const duration = selectedPlan ? selectedPlan.duration : 0; // Assume `duration` is in days
+        const duration = selectedPlan ? selectedPlan.duration : 0;
         const calculatedEndDate = startDate
             ? new Date(new Date(startDate).setDate(new Date(startDate).getDate() + duration)).toISOString().split('T')[0]
             : '';
@@ -149,7 +149,7 @@ function Subscriptions() {
     // Handle plan change: update price when a plan is selected
     const handlePlanChange = (planId) => {
         const selectedPlan = plans.find((plan) => plan._id === planId);
-        const duration = selectedPlan ? selectedPlan.duration : 0; // Assume `duration` is in days
+        const duration = selectedPlan ? selectedPlan.duration : 0;
         const calculatedEndDate = formData.startDate
             ? new Date(new Date(formData.startDate).setDate(new Date(formData.startDate).getDate() + duration)).toISOString().split('T')[0]
             : '';
@@ -195,7 +195,6 @@ function Subscriptions() {
                         customerId: data.data.customerId,
                         planId: data.data.planId,
                         businessId
-                        // handlePaymentCallback, // Pass the callback for updating subscription status
                     },
                 });
                 setTimeout(() => {
@@ -218,22 +217,6 @@ function Subscriptions() {
             }, 5000);
         }
     };
-
-    // const handlePaymentCallback = async (subscriptionId, status) => {
-    //     try {
-    //         const { data } = await updateSubscription({
-    //             variables: {
-    //                 id: subscriptionId,
-    //                 status: status,
-    //             },
-    //         });
-    //         setSubscriptions(subscriptions.map(subscription => subscription._id === subscriptionId ? data.updateSubscription : subscription));
-    //         fetchSubscriptions(); // Refetch subscriptions
-    //         setShowForm(false);
-    //     } catch (error) {
-    //         console.error('Error updating subscription:', error.message);
-    //     }
-    // };
 
     // Handle update subscription
     const handleUpdateSubscription = async () => {
@@ -388,7 +371,6 @@ function Subscriptions() {
                         <input
                             type="date"
                             value={formData.endDate}
-                            // onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
                             readOnly
                         />
                         <input

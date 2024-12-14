@@ -37,7 +37,7 @@ function Customers() {
     const [toastMessage, setToastMessage] = useState('');
     const [toastError, setToastError] = useState(false);
 
-    // Use Apollo Client's useMutation hook to update and delete customers
+    // Using Apollo Client's useMutation hook to update and delete customers
     const [updateCustomer] = useMutation(UPDATE_CUSTOMER);
     const [deleteCustomer] = useMutation(DELETE_CUSTOMER);
 

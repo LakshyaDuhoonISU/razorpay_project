@@ -12,13 +12,14 @@ import PaymentForm from './components/PaymentForm';
 import client from './apolloClient';
 import { ApolloProvider } from '@apollo/client';
 import Auth from './hoc/Auth';
+import HomePage from './components/HomePage';
 
 const App = () => (
   <AuthProvider>
     <ApolloProvider client={client}>
       <Router>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/register" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Auth children={<Dashboard />} />} />
