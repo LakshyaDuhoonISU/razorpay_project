@@ -80,10 +80,8 @@ export const businessResolvers = {
                 console.error("Neo4j error: ", neo4jerr);
             }
 
-            // Delete transactions associated with the business's customers
-            const customers = await Customer.find({ businessId: id });
-            const customerIds = customers.map((customer) => customer._id);
-            await Transaction.deleteMany({ customerId: { $in: customerIds } });
+            // Delete transactions associated with the business
+            await Transaction.deleteMany({ businessId: id });
 
             // Delete customers associated with the business
             await Customer.deleteMany({ businessId: id });
@@ -91,10 +89,10 @@ export const businessResolvers = {
             // Delete plans associated with the business
             await Plan.deleteMany({ businessId: id });
 
-            // Delete subscriptions associated with the business's customers
-            await Subscription.deleteMany({ customerId: { $in: customerIds } });
+            // Delete subscriptions associated with the business
+            await Subscription.deleteMany({ businessId: id });
 
-            // Finally, delete the business
+            // Delete the business
             await Business.findByIdAndDelete(id);
 
             return "Business and all associated data deleted successfully";

@@ -30,6 +30,22 @@
   gap: 10px;
 }
 
+.email {
+  width: 95%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.email:focus {
+  border-color: #4caf50;
+  outline: none;
+  /* box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); */
+}
+
 .form input,
 .form textarea {
   margin: 10px 0;

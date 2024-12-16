@@ -179,7 +179,7 @@ function Dashboard() {
                 }}
             >
                 <div className={styles.card}>
-                    <h1>Welcome to your Dashboard</h1>
+                    <h1>Welcome to FlashPay</h1>
                     {userData ? (
                         <div>
                             <h2>Business Profile</h2>

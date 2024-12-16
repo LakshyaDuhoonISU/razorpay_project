@@ -228,7 +228,7 @@ function Customers() {
 
             {/* Sidebar */}
             <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
-                <Box role="presentation" onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
+                <Box role="presentation" onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)} sx={{ width: 250 }}>
                     <List>
                         <ListItem button component={Link} to="/dashboard">
                             <ListItemText primary="Dashboard" />
@@ -268,6 +268,7 @@ function Customers() {
                         <input
                             type="email"
                             placeholder="Email"
+                            className={styles.email}
                             value={formData.email}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                             required
@@ -278,6 +279,7 @@ function Customers() {
                             value={formData.phone}
                             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                             required
+                            maxLength={10}
                         />
                         <button type="submit" className={styles.saveButton}>
                             {formData._id ? 'Update Customer' : 'Add Customer'}

@@ -20,20 +20,66 @@ const PaymentForm = () => {
     const { state } = useLocation();
     const { subscriptionId, customerId, planId, amount, businessId } = state;
     const [paymentMethod, setPaymentMethod] = useState('');
+    const [cardDetails, setCardDetails] = useState({
+        cardNumber: '',
+        cardHolderName: '',
+        expiryDate: '',
+        cvv: '',
+    });
     const [updateSubscription] = useMutation(UPDATE_SUBSCRIPTION);
     const navigate = useNavigate();
     const { idToken } = useAuth();
     const [qrCode, setQrCode] = useState('');
 
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setCardDetails((prevDetails) => ({
+            ...prevDetails,
+            [name]: value,
+        }));
+    };
+
     const handlePayment = async (status) => {
+        // Validate Credit/Debit Card fields if selected
+        if (paymentMethod === 'Credit/Debit Card') {
+            const { cardNumber, cardHolderName, expiryDate, cvv } = cardDetails;
+
+            if (!cardNumber || cardNumber.length !== 16) {
+                alert('Please enter a valid 16-digit card number.');
+                return;
+            }
+            if (!cardHolderName) {
+                alert('Please enter the cardholder name.');
+                return;
+            }
+            if (!expiryDate || expiryDate.length !== 5 || !/^\d{2}\/\d{2}$/.test(expiryDate)) {
+                alert('Please enter a valid expiry date in MM/YY format.');
+                return;
+            }
+
+            // Extract year and validate
+            const [month, year] = expiryDate.split('/').map((val) => parseInt(val));
+            if (year < 25) {
+                alert('Please enter a valid expiry date. Year should be at least 2025.');
+                return;
+            }
+            if (month < 1 || month > 12) {
+                alert('Please enter a valid expiry date. Month should be between 01 and 12.');
+                return;
+            }
+
+            if (!cvv || cvv.length !== 3 || !/^\d{3}$/.test(cvv)) {
+                alert('Please enter a valid 3-digit numeric CVV.');
+                return;
+            }
+        }
+
         try {
-            // Call the backend to create a transaction
-            // console.log('businessId:', businessId);
             await fetch('http://localhost:8000/api/transactions', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${idToken}`
+                    'Authorization': `Bearer ${idToken}`,
                 },
                 body: JSON.stringify({
                     customerId: customerId._id,
@@ -45,7 +91,6 @@ const PaymentForm = () => {
                 }),
             });
 
-            // Update the subscription status
             await updateSubscription({
                 variables: {
                     id: subscriptionId,
@@ -53,7 +98,6 @@ const PaymentForm = () => {
                 },
             });
 
-            // Navigate to transactions page
             navigate('/transactions');
         } catch (error) {
             console.error('Error processing payment:', error);
@@ -87,7 +131,7 @@ const PaymentForm = () => {
 
     return (
         <div className={styles.container}>
-            <h2>Payment Form</h2>
+            <h2>Payment</h2>
             <label>
                 Select Payment Method:
                 <select
@@ -128,43 +172,64 @@ const PaymentForm = () => {
             )}
 
             {paymentMethod === 'Credit/Debit Card' && (
-                <div>
+                <form>
                     <h3>Enter Card Details</h3>
                     <input
                         type="text"
                         placeholder="Card Number"
+                        name="cardNumber"
+                        value={cardDetails.cardNumber}
+                        onChange={handleInputChange}
                         className={styles.input}
-                        required
                         maxLength="16"
+                        required
                     />
                     <input
                         type="text"
                         placeholder="Card Holder Name"
+                        name="cardHolderName"
+                        value={cardDetails.cardHolderName}
+                        onChange={handleInputChange}
                         className={styles.input}
                         required
                     />
                     <input
                         type="text"
                         placeholder="MM/YY"
+                        name="expiryDate"
+                        value={cardDetails.expiryDate}
+                        onChange={handleInputChange}
                         className={styles.input}
+                        maxLength="5"
                         required
                     />
                     <input
                         type="password"
                         placeholder="CVV"
+                        name="cvv"
+                        value={cardDetails.cvv}
+                        onChange={handleInputChange}
                         className={styles.input}
-                        required
                         maxLength="3"
+                        required
                     />
-                </div>
+                </form>
             )}
 
             {paymentMethod && (
                 <div className={styles.buttonContainer}>
-                    <button onClick={() => handlePayment('success')} className={styles.confirmButton}>
+                    <button
+                        type="button"
+                        onClick={() => handlePayment('success')}
+                        className={styles.confirmButton}
+                    >
                         Confirm Transaction
                     </button>
-                    <button onClick={() => handlePayment('failed')} className={styles.failButton}>
+                    <button
+                        type="button"
+                        onClick={() => handlePayment('failed')}
+                        className={styles.failButton}
+                    >
                         Fail Transaction
                     </button>
                 </div>
@@ -172,6 +237,5 @@ const PaymentForm = () => {
         </div>
     );
 };
-
 
 export default PaymentForm;

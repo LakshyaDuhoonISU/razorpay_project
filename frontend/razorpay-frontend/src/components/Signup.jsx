@@ -106,7 +106,7 @@ const Signup = () => {
                         placeholder="Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className={styles.input}
+                        className={styles.email}
                         required
                     />
                 </label>
@@ -120,6 +120,7 @@ const Signup = () => {
                         onChange={(e) => setPhone(e.target.value)}
                         className={styles.input}
                         required
+                        maxLength={10}
                     />
                 </label>
 

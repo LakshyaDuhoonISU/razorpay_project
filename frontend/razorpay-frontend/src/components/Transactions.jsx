@@ -62,7 +62,7 @@ function Transactions() {
 
             {/* Sidebar */}
             <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
-                <Box role="presentation" onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
+                <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
                     <List>
                         <ListItem button component={Link} to="/dashboard">
                             <ListItemText primary="Dashboard" />
