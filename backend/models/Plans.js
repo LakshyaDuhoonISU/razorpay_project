@@ -21,7 +21,7 @@ const PlanSchema = new mongoose.Schema({
     }, // Duration in days
     businessId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Business',
+        ref: 'businesses',
         required: true
     }
 }, { timestamps: true });

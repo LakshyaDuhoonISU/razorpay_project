@@ -85,6 +85,9 @@ function Login() {
                 <p>
                     Don't have an account? <Link to="/register">Sign Up</Link>
                 </p>
+                <p>
+                    Are you a customer? <Link to="/custlogin">Customer Login</Link>
+                </p>
             </form>
 
             {idToken && (

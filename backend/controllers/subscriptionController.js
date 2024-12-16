@@ -7,7 +7,7 @@ import Business from '../models/Business.js';
 // Create a new subscription
 export const createSubscription = async (req, res) => {
     try {
-        const { customerId, planId, price, startDate, endDate, status, businessId } = req.body;
+        const { customerId, planId, price, startDate, endDate, status, paymentStatus, businessId } = req.body;
 
         // Validate customerId and ensure the customer belongs to the authenticated business
         if (!mongoose.Types.ObjectId.isValid(customerId)) {
@@ -38,6 +38,7 @@ export const createSubscription = async (req, res) => {
             startDate,
             endDate,
             status,
+            paymentStatus,
             businessId: businessId
         });
 

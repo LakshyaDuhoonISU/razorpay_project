@@ -13,6 +13,8 @@ export const createTransaction = async (req, res) => {
     try {
         const { customerId, planId, date, status, amount, method, businessId } = req.body;
 
+        console.log(req.body);
+
         // Validate customerId
         if (!isValidObjectId(customerId)) {
             return res.status(400).send({ message: "Invalid customer ID" });

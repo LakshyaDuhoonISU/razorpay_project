@@ -297,7 +297,7 @@ function Plans() {
                                 <strong>Description:</strong> {plan.description}
                             </p>
                             <p>
-                                <strong>Price:</strong> ${plan.price}
+                                <strong>Price:</strong> ₹{plan.price}
                             </p>
                             <p>
                                 <strong>Duration:</strong> {plan.duration} days

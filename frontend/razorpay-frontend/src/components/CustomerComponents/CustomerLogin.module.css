@@ -1,0 +1,75 @@
+/* General container styling */
+.loginContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f3f4f6;
+}
+
+/* Form container */
+.loginForm {
+    background: #ffffff;
+    padding: 2rem 3rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Input field styling */
+.loginInput {
+    width: 100%;
+    padding: 0.8rem;
+    margin: 1rem 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+/* Button styling */
+.loginButton {
+    width: 100%;
+    padding: 0.8rem;
+    background: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.loginButton:disabled {
+    background: #9ccc9b;
+    cursor: not-allowed;
+}
+
+.loginButton:hover:not(:disabled) {
+    background: #45a049;
+}
+
+/* Toast notification styling */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #e53935;
+    color: #fff;
+    padding: 0.8rem 1.2rem;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-size: 0.9rem;
+    z-index: 1000;
+    animation: fadeInOut 5s ease;
+}
+
+/* Toast animation */
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(10px) translateX(-50%); }
+    10% { opacity: 1; transform: translateY(0) translateX(-50%); }
+    90% { opacity: 1; transform: translateY(0) translateX(-50%); }
+    100% { opacity: 0; transform: translateY(10px) translateX(-50%); }
+}

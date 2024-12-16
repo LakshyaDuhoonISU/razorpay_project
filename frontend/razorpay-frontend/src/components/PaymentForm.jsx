@@ -5,13 +5,15 @@ import { gql } from 'graphql-tag';
 import upiQRCode from '../assets/qr.jpeg';
 import { useAuth } from './AuthContext';
 import styles from './PaymentForm.module.css';
+import { upiID } from '../constants';
 
 // GraphQL mutation
 const UPDATE_SUBSCRIPTION = gql`
-  mutation UpdateSubscription($id: ID!, $status: String!) {
-    updateSubscription(id: $id, status: $status) {
+  mutation UpdateSubscription($id: ID!, $status: String!, $paymentStatus: String) {
+    updateSubscription(id: $id, status: $status, paymentStatus: $paymentStatus) {
       id
       status
+      paymentStatus
     }
   }
 `;
@@ -19,6 +21,7 @@ const UPDATE_SUBSCRIPTION = gql`
 const PaymentForm = () => {
     const { state } = useLocation();
     const { subscriptionId, customerId, planId, amount, businessId } = state;
+    // console.log('PaymentForm:', state);
     const [paymentMethod, setPaymentMethod] = useState('');
     const [cardDetails, setCardDetails] = useState({
         cardNumber: '',
@@ -95,10 +98,11 @@ const PaymentForm = () => {
                 variables: {
                     id: subscriptionId,
                     status: status === 'success' ? 'active' : 'cancelled',
+                    paymentStatus: status === 'success' ? 'paid' : 'pending',
                 },
             });
 
-            navigate('/transactions');
+            navigate('/custtransactions');
         } catch (error) {
             console.error('Error processing payment:', error);
             alert('An error occurred during the payment process.');
@@ -113,7 +117,7 @@ const PaymentForm = () => {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            upiId: 'lakshyaduhoon723@okicici',
+                            upiId: upiID,
                             name: 'Lakshya Duhoon',
                             amount,
                         }),

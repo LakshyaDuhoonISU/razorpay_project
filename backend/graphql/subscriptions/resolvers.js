@@ -8,7 +8,7 @@ export const subscriptionResolvers = {
     },
     Mutation: {
         // Update subscription details
-        updateSubscription: async (_, { id, planId, price, startDate, endDate, status }) => {
+        updateSubscription: async (_, { id, planId, price, startDate, endDate, status, paymentStatus }) => {
             try {
                 const subscription = await Subscription.findById(id);
                 if (!subscription) {
@@ -25,6 +25,7 @@ export const subscriptionResolvers = {
                 if (startDate) updates.startDate = startDate;
                 if (endDate) updates.endDate = endDate;
                 if (status) updates.status = status;
+                if (paymentStatus) updates.paymentStatus = paymentStatus;
         
                 const updatedSubscription = await Subscription.findByIdAndUpdate(id, updates, { new: true });
                 if (!updatedSubscription) {

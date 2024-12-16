@@ -68,21 +68,28 @@ export const getCustomersByBusiness = async (req, res) => {
 // Get all transactions for a specific customer
 export const getTransactionsByCustomer = async (req, res) => {
     try {
-        const { id: customerId } = req.params;
+        const { id: customerId } = req.params; // Extract customer ID from the route params
 
         // Validate ObjectId
         if (!mongoose.Types.ObjectId.isValid(customerId)) {
             return res.status(400).send({ message: "Invalid customer ID" });
         }
 
-        // Check if the customer belongs to the authenticated business
-        const customer = await Customer.findOne({ _id: customerId, businessId: req.firebaseUid });
-        if (!customer) {
-            return res.status(403).send({ message: "Unauthorized to view transactions for this customer" });
-        }
+        // // Check if the customer belongs to the authenticated business
+        // const customer = await Customer.findOne({ _id: customerId, businessId: req.firebaseUid });
+        // if (!customer) {
+        //     return res.status(403).send({ message: "Unauthorized to view transactions for this customer" });
+        // }
 
         // Fetch transactions for this customer
-        const transactions = await Transaction.find({ customerId }).select("-__v"); // Exclude metadata fields
+        const transactions = await Transaction.find({ customerId })
+        .populate('planId', 'name price') // Populate only the name and amount fields of the plan
+        .select("-__v"); // Exclude metadata fields
+
+        if (!transactions.length) {
+            return res.status(404).send({ message: "No transactions found for this customer" });
+        }
+
         res.status(200).send({ message: "Transactions retrieved successfully", data: transactions });
     } catch (err) {
         console.error(err);
@@ -93,22 +100,20 @@ export const getTransactionsByCustomer = async (req, res) => {
 // Get the profile of a specific customer
 export const getCustomerProfile = async (req, res) => {
     try {
-        const { id: customerId } = req.params;
+        const { email } = req.params; // Get email from the request parameters (sent by the frontend)
 
-        // Validate ObjectId
-        if (!mongoose.Types.ObjectId.isValid(customerId)) {
-            return res.status(400).send({ message: "Invalid customer ID" });
-        }
+        // Fetch the customer profile using the email
+        const customer = await Customer.findOne({ email })
+            .populate('businessId', 'name') // populate the associated business details
+            .select("-__v"); // Exclude metadata fields
 
-        // Check if the customer belongs to the authenticated business
-        const customer = await Customer.findOne({ _id: customerId, businessId: req.firebaseUid }).select("-__v");
         if (!customer) {
-            return res.status(403).send({ message: "Unauthorized to view this customer's profile" });
+            return res.status(404).send({ message: "Customer not found" });
         }
 
         res.status(200).send({ message: "Customer profile retrieved successfully", data: customer });
     } catch (err) {
-        console.error(err);
+        console.error("Error fetching customer profile:", err);
         res.status(500).send({ message: "Internal server error" });
     }
 };

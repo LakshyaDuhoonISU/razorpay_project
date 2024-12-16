@@ -36,9 +36,14 @@ const SubscriptionSchema = new mongoose.Schema({
         enum: ['active', 'cancelled'],
         default: 'active'
     },
+    paymentStatus: {
+        type: String,
+        enum: ['pending', 'paid'],
+        default: 'pending'
+    },
     businessId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Business',
+        ref: 'businesses',
         required: true
     }
 }, { timestamps: true });

@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { Box, Drawer, List, ListItem, ListItemText, IconButton, AppBar, Toolbar, Typography, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { gql } from 'graphql-tag';
 import styles from './Subscriptions.module.css';
 
-// GraphQL mutations for update and delete subscription
+// GraphQL mutations for updating subscription
 const UPDATE_SUBSCRIPTION = gql`
   mutation UpdateSubscription($id: ID!, $planId: ID, $price: Float, $startDate: String, $endDate: String, $status: String) {
     updateSubscription(id: $id, planId: $planId, price: $price, startDate: $startDate, endDate: $endDate, status: $status) {
@@ -40,7 +40,6 @@ function Subscriptions() {
     });
     const [toastMessage, setToastMessage] = useState('');
     const [toastError, setToastError] = useState(false);
-    const navigate = useNavigate();
 
     const [updateSubscription] = useMutation(UPDATE_SUBSCRIPTION);
 
@@ -188,15 +187,6 @@ function Subscriptions() {
                     businessId: businessId,
                 });
                 setShowForm(false);
-                navigate('/payment', {
-                    state: {
-                        subscriptionId: data.data._id,
-                        amount: data.data.price,
-                        customerId: data.data.customerId,
-                        planId: data.data.planId,
-                        businessId
-                    },
-                });
                 setTimeout(() => {
                     setToastMessage('');
                 }, 5000);
@@ -410,7 +400,7 @@ function Subscriptions() {
                                 <strong>End Date:</strong> {subscription.endDate ? new Date(subscription.endDate).toLocaleDateString() : "Ongoing"}
                             </p>
                             <p>
-                                <strong>Price: $</strong> {subscription.price || "Unknown"}
+                                <strong>Price: ₹</strong> {subscription.price || "Unknown"}
                             </p>
                             <p>
                                 <strong>Status: </strong> {subscription.status || "Active"}
