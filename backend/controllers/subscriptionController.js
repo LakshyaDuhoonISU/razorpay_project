@@ -65,8 +65,8 @@ export const getSubscriptionsByCustomer = async (req, res) => {
 
         // Fetch subscriptions for the specific customer
         const subscriptions = await Subscription.find({ customerId })
-        .populate('customerId', 'name')
-        .populate('planId', 'name');
+            .populate('customerId', 'name')
+            .populate('planId', 'name');
 
         if (subscriptions.length === 0) {
             return res.status(404).send({ message: "No subscriptions found for this customer" });

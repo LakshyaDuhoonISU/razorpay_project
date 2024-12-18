@@ -1,0 +1,109 @@
+.container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  margin-top: 80px; /* To adjust for the AppBar height */
+}
+
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.subscriptionTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.subscriptionTable th,
+.subscriptionTable td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.subscriptionTable th {
+  background-color: #f4f4f4;
+  color: #333;
+  text-transform: uppercase;
+}
+
+.subscriptionTable tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.subscriptionTable tr:hover {
+  background-color: #f1f1f1;
+}
+
+.payButton {
+  background-color: #28a745;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin: 5px;
+}
+
+.payButton:hover {
+  background-color: #218838;
+}
+
+.cancelButton {
+  background-color: #dc3545;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin: 5px;
+}
+
+.cancelButton:hover {
+  background-color: #c82333;
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #000;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  font-size: 14px;
+  animation: fadein 0.5s, fadeout 0.5s 4.5s;
+}
+
+.toastError {
+  background-color: #dc3545;
+}
+
+.toastSuccess {
+  background-color: #28a745;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeout {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}

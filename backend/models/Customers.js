@@ -17,10 +17,10 @@ const CustomerSchema = new mongoose.Schema({
         unique: true,
         match: /^[0-9]{10}$/
     },
-    businessId: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'businesses', 
-        required: true 
+    businessId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'businesses',
+        required: true
     }
 }, { timestamps: true });
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { Box, Drawer, List, ListItem, ListItemText, IconButton, AppBar, Toolbar, Typography, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { gql } from 'graphql-tag';
 import styles from './Plans.module.css';
@@ -43,6 +43,7 @@ function Plans() {
     const [drawerOpen, setDrawerOpen] = useState(false); // State to toggle Drawer
     const [toastMessage, setToastMessage] = useState(''); // State for toast message
     const [toastError, setToastError] = useState(false); // State for error type in toast
+    const navigate = useNavigate();
 
     // GraphQL mutations
     const [updatePlan] = useMutation(UPDATE_PLAN);
@@ -215,6 +216,9 @@ function Plans() {
                     </IconButton>
                     <Typography variant="h6" sx={{ flexGrow: 1 }}>
                         Plan Management
+                    </Typography>
+                    <Typography variant="body1" sx={{ cursor: 'pointer' }} onClick={() => navigate('/dashboard')}>
+                        Back to Dashboard
                     </Typography>
                 </Toolbar>
             </AppBar>

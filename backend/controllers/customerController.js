@@ -54,10 +54,6 @@ export const getCustomersByBusiness = async (req, res) => {
         // Step 2: Use the ObjectId of the business to fetch customers
         const customers = await Customer.find({ businessId: business._id }).select("-__v"); // Exclude metadata fields
 
-        // if (customers.length === 0) {
-        //     res.status(404).send({ message: "No customers found for this business", data:customers });
-        // }
-
         res.status(200).send({ message: "Customers retrieved successfully", data: customers });
     } catch (err) {
         console.error(err);
@@ -75,16 +71,10 @@ export const getTransactionsByCustomer = async (req, res) => {
             return res.status(400).send({ message: "Invalid customer ID" });
         }
 
-        // // Check if the customer belongs to the authenticated business
-        // const customer = await Customer.findOne({ _id: customerId, businessId: req.firebaseUid });
-        // if (!customer) {
-        //     return res.status(403).send({ message: "Unauthorized to view transactions for this customer" });
-        // }
-
         // Fetch transactions for this customer
         const transactions = await Transaction.find({ customerId })
-        .populate('planId', 'name price') // Populate only the name and amount fields of the plan
-        .select("-__v"); // Exclude metadata fields
+            .populate('planId', 'name price') // Populate only the name and amount fields of the plan
+            .select("-__v"); // Exclude metadata fields
 
         if (!transactions.length) {
             return res.status(404).send({ message: "No transactions found for this customer" });

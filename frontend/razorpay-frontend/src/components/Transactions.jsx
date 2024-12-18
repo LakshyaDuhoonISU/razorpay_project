@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { Box, Drawer, List, ListItem, ListItemText, IconButton, AppBar, Toolbar, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from './Transactions.module.css';
 
 function Transactions() {
     const { idToken, businessId } = useAuth();
     const [transactions, setTransactions] = useState([]);
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchTransactions = async () => {
@@ -56,6 +57,9 @@ function Transactions() {
                     </IconButton>
                     <Typography variant="h6" sx={{ flexGrow: 1 }}>
                         Transaction Management
+                    </Typography>
+                    <Typography variant="body1" sx={{ cursor: 'pointer' }} onClick={() => navigate('/dashboard')}>
+                        Back to Dashboard
                     </Typography>
                 </Toolbar>
             </AppBar>

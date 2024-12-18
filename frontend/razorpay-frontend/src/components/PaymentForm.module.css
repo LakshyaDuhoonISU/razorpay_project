@@ -1,94 +1,94 @@
 .container {
-    max-width: 600px;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    font-family: 'Arial', sans-serif;
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: "Arial", sans-serif;
 }
 
 h2 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 20px;
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
 }
 
 label {
-    display: block;
-    margin-bottom: 15px;
-    font-size: 16px;
-    color: #555;
+  display: block;
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: #555;
 }
 
 select,
 input {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
 }
 
 select:focus,
 input:focus {
-    outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 img {
-    display: block;
-    margin: 20px auto;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    max-width: 200px;
+  display: block;
+  margin: 20px auto;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  max-width: 200px;
 }
 
 button {
-    display: inline-block;
-    padding: 10px 20px;
-    margin: 10px 5px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    text-align: center;
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 10px 5px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: center;
 }
 
 button:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
 
 button:last-child {
-    background-color: #dc3545;
+  background-color: #dc3545;
 }
 
 button:last-child:hover {
-    background-color: #a71d2a;
+  background-color: #a71d2a;
 }
 
 div {
-    text-align: center;
+  text-align: center;
 }
 
 h3 {
-    margin-top: 20px;
-    margin-bottom: 10px;
-    color: #444;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: #444;
 }
 
 input[type="text"],
 input[type="password"] {
-    display: block;
-    width: 90%;
-    margin: 10px auto;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
+  display: block;
+  width: 90%;
+  margin: 10px auto;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
 }

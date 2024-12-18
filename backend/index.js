@@ -38,9 +38,6 @@ app.post('/generate-qr', async (req, res) => {
 // auth route
 app.use('/api/businesses', businessRoutes);
 
-// // middleware
-// app.use(authMiddleware);
-
 // routes
 app.use('/api/customers', customerRoutes);
 app.use('/api/transactions', transactionRoutes);
@@ -51,18 +48,6 @@ app.use('/api/plans', planRoutes);
 const apolloServer = new ApolloServer({
     typeDefs,
     resolvers,
-    // context: async ({ req }) => {
-    //     const authHeader = req.headers.authorization || '';
-    //     const token = authHeader.replace('Bearer ', '');
-
-    //     // Verify Firebase token
-    //     try {
-    //         const decoded = await admin.auth().verifyIdToken(token);
-    //         return { businessId: decoded.uid }; // Pass the businessId to context
-    //     } catch (err) {
-    //         throw new Error('Unauthorized');
-    //     }
-    // },
 });
 
 await apolloServer.start();

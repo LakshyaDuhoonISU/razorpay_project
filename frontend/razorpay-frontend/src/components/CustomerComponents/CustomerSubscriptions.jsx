@@ -29,6 +29,7 @@ const CustomerSubscriptions = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [updateSubscription] = useMutation(UPDATE_SUBSCRIPTION);
     const [openDialog, setOpenDialog] = useState(false);
+    const [subscriptionToCancel, setSubscriptionToCancel] = useState(null);
 
     useEffect(() => {
         if (!customer) {
@@ -85,6 +86,39 @@ const CustomerSubscriptions = () => {
                 businessId: subscription.businessId,
             },
         });
+    };
+
+    // Handle cancel subscription button click
+    const cancelSubscription = async () => {
+        try {
+            const { data } = await updateSubscription({
+                variables: {
+                    id: subscriptionToCancel,
+                    status: 'cancelled',
+                },
+            });
+
+            // Update the local state after cancellation
+            setSubscriptions(subscriptions.map((sub) =>
+                sub._id === subscriptionToCancel ? { ...sub, status: 'cancelled' } : sub
+            ));
+            showToast('Subscription cancelled successfully.');
+        } catch (error) {
+            console.error('Error cancelling subscription:', error);
+            showToast('Failed to cancel subscription.');
+        } finally {
+            setOpenDialog(false); // Close the confirmation dialog
+        }
+    };
+
+    const confirmCancel = (subscriptionId) => {
+        setSubscriptionToCancel(subscriptionId);
+        setOpenDialog(true); // Open the confirmation dialog
+    };
+
+    const closeDialog = () => {
+        setOpenDialog(false); // Close the confirmation dialog
+        setSubscriptionToCancel(null);
     };
 
     return (
@@ -177,7 +211,7 @@ const CustomerSubscriptions = () => {
                                         <td>
                                             <button
                                                 className={styles.payButton}
-                                                onClick={() => cancelSubscription(subscription._id)}
+                                                onClick={() => confirmCancel(subscription._id)}
                                             >
                                                 Cancel
                                             </button>
@@ -189,6 +223,22 @@ const CustomerSubscriptions = () => {
                     </table>
                 )}
             </Box>
+
+            {/* Confirmation Dialog */}
+            <Dialog open={openDialog} onClose={closeDialog}>
+                <DialogTitle>Confirm Cancellation</DialogTitle>
+                <DialogContent>
+                    <p>Are you sure you want to cancel this subscription?</p>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={closeDialog} color="primary">
+                        No
+                    </Button>
+                    <Button onClick={cancelSubscription} color="secondary">
+                        Yes, Cancel
+                    </Button>
+                </DialogActions>
+            </Dialog>
 
             {/* Toast Notification */}
             {toastMessage && <div className={styles.toast}>{toastMessage}</div>}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { Box, Drawer, List, ListItem, ListItemText, IconButton, AppBar, Toolbar, Typography, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { gql } from 'graphql-tag';
 import styles from './Subscriptions.module.css';
@@ -40,6 +40,7 @@ function Subscriptions() {
     });
     const [toastMessage, setToastMessage] = useState('');
     const [toastError, setToastError] = useState(false);
+    const navigate = useNavigate();
 
     const [updateSubscription] = useMutation(UPDATE_SUBSCRIPTION);
 
@@ -292,6 +293,9 @@ function Subscriptions() {
                     </IconButton>
                     <Typography variant="h6" sx={{ flexGrow: 1 }}>
                         Subscription Management
+                    </Typography>
+                    <Typography variant="body1" sx={{ cursor: 'pointer' }} onClick={() => navigate('/dashboard')}>
+                        Back to Dashboard
                     </Typography>
                 </Toolbar>
             </AppBar>

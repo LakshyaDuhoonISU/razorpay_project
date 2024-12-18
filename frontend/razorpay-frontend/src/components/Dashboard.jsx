@@ -110,7 +110,7 @@ function Dashboard() {
         try {
             await deleteBusiness({ variables: { id: userData._id } });
             alert("Business profile and related data deleted successfully.");
-            navigate('/login');
+            navigate('/');
         } catch (error) {
             console.error("Error deleting business profile:", error);
             alert("Failed to delete profile.");
@@ -183,19 +183,19 @@ function Dashboard() {
                     {userData ? (
                         <div>
                             <h2>Business Profile</h2>
-                            <p><strong>Name:</strong> 
-                                {isEditing ? 
+                            <p><strong>Name:</strong>
+                                {isEditing ?
                                     <input type="text" value={userData.name} onChange={(e) => setUserData({ ...userData, name: e.target.value })} />
                                     : userData.name}
                             </p>
                             <p><strong>Email:</strong> {userData.email}</p>
-                            <p><strong>Phone:</strong> 
-                                {isEditing ? 
+                            <p><strong>Phone:</strong>
+                                {isEditing ?
                                     <input type="text" value={userData.phone} onChange={(e) => setUserData({ ...userData, phone: e.target.value })} />
                                     : userData.phone}
                             </p>
-                            <p><strong>Address:</strong> 
-                                {isEditing ? 
+                            <p><strong>Address:</strong>
+                                {isEditing ?
                                     <input type="text" value={userData.address} onChange={(e) => setUserData({ ...userData, address: e.target.value })} />
                                     : userData.address}
                             </p>

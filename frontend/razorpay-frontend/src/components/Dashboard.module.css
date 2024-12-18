@@ -1,160 +1,162 @@
 /* General Container */
 .dashboardContainer {
-    display: flex;
-    height: 100vh;
-    font-family: 'Roboto', sans-serif;
-    background-color: #f5f5f5;
+  display: flex;
+  height: 100vh;
+  font-family: "Roboto", sans-serif;
+  background-color: #f5f5f5;
 }
 
 /* Sidebar Styles */
 .sidebar {
-    width: 250px;
-    background-color: #4caf50;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
+  width: 250px;
+  background-color: #4caf50;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
 }
 
 .sidebarTitle {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
 
 .menu {
-    list-style: none;
-    padding: 0;
-    width: 100%;
+  list-style: none;
+  padding: 0;
+  width: 100%;
 }
 
 .menu li {
-    margin: 10px 0;
-    text-align: center;
+  margin: 10px 0;
+  text-align: center;
 }
 
 .menu li a {
-    text-decoration: none;
-    color: white;
-    font-size: 16px;
-    transition: color 0.3s;
+  text-decoration: none;
+  color: white;
+  font-size: 16px;
+  transition: color 0.3s;
 }
 
 .menu li a:hover {
-    color: #c8e6c9;
+  color: #c8e6c9;
 }
 
 .logoutButton {
-    margin-top: auto;
-    padding: 10px 20px;
-    background-color: #e53935;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+  margin-top: auto;
+  padding: 10px 20px;
+  background-color: #e53935;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .logoutButton:hover {
-    background-color: #d32f2f;
+  background-color: #d32f2f;
 }
 
 /* Main Content */
 .content {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
 }
 
 /* Card Styling */
 .card {
-    background-color: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    width: 100%;
-    max-width: 500px;
-    margin: 0 auto; /* Center the card */
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto; /* Center the card */
 }
 
 .card h1 {
-    font-size: 28px;
-    margin-bottom: 20px;
-    color: #333;
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #333;
 }
 
 .card h2 {
-    font-size: 22px;
-    margin-bottom: 10px;
-    color: #555;
+  font-size: 22px;
+  margin-bottom: 10px;
+  color: #555;
 }
 
 .card p {
-    font-size: 16px;
-    color: #555;
-    margin: 5px 0;
+  font-size: 16px;
+  color: #555;
+  margin: 5px 0;
 }
 
 /* Action Buttons */
 .actions {
-    margin-top: 20px;
-    display: flex;
-    justify-content: space-around;
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-around;
 }
 
-.editButton, .deleteButton {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+.editButton,
+.deleteButton {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .editButton {
-    background-color: #4caf50;
-    color: white;
+  background-color: #4caf50;
+  color: white;
 }
 
 .editButton:hover {
-    background-color: #43a047;
+  background-color: #43a047;
 }
 
 .deleteButton {
-    background-color: #f44336;
-    color: white;
+  background-color: #f44336;
+  color: white;
 }
 
 .deleteButton:hover {
-    background-color: #e53935;
+  background-color: #e53935;
 }
 
 /* Responsive Design */
 @media (max-width: 480px) {
-    .card {
-        padding: 20px;
-        width: 90%;
-    }
+  .card {
+    padding: 20px;
+    width: 90%;
+  }
 
-    .card h1 {
-        font-size: 24px;
-    }
+  .card h1 {
+    font-size: 24px;
+  }
 
-    .card h2 {
-        font-size: 20px;
-    }
+  .card h2 {
+    font-size: 20px;
+  }
 
-    .actions {
-        flex-direction: column;
-    }
+  .actions {
+    flex-direction: column;
+  }
 
-    .editButton, .deleteButton {
-        width: 100%;
-        margin-bottom: 10px;
-    }
+  .editButton,
+  .deleteButton {
+    width: 100%;
+    margin-bottom: 10px;
+  }
 }

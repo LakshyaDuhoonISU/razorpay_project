@@ -4,7 +4,7 @@ const CustomerContext = createContext();
 
 export const CustomerProvider = ({ children }) => {
     const [customer, setCustomer] = useState(() => {
-        // Rehydrate customer state from localStorage if available
+        // Refetch customer state from localStorage if available
         const savedCustomer = localStorage.getItem('customer');
         return savedCustomer ? JSON.parse(savedCustomer) : null;
     });

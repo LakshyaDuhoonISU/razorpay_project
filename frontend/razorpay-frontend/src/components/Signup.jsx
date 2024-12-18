@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import styles from './Signup.module.css'; 
+import styles from './Signup.module.css';
 
 const Signup = () => {
     const [businessName, setBusinessName] = useState('');
@@ -11,7 +11,7 @@ const Signup = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [toastMessage, setToastMessage] = useState({ error: false, message: '' });
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
     // Reset Toast Message after 5 seconds
     const resetToast = () => {

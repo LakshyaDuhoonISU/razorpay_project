@@ -3,7 +3,7 @@ import styles from './Customers.module.css';
 import { useAuth } from './AuthContext';
 import { Box, Drawer, List, ListItem, ListItemText, IconButton, AppBar, Toolbar, Typography, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { gql } from 'graphql-tag';
 
@@ -36,6 +36,7 @@ function Customers() {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
     const [toastError, setToastError] = useState(false);
+    const navigate = useNavigate();
 
     // Using Apollo Client's useMutation hook to update and delete customers
     const [updateCustomer] = useMutation(UPDATE_CUSTOMER);
@@ -222,6 +223,9 @@ function Customers() {
                     </IconButton>
                     <Typography variant="h6" sx={{ flexGrow: 1 }}>
                         Customer Management
+                    </Typography>
+                    <Typography variant="body1" sx={{ cursor: 'pointer' }} onClick={() => navigate('/dashboard')}>
+                        Back to Dashboard
                     </Typography>
                 </Toolbar>
             </AppBar>
