@@ -270,7 +270,7 @@ function Customers() {
                             required
                         />
                         <input
-                            type="email"
+                            type="text"
                             placeholder="Email"
                             className={styles.email}
                             value={formData.email}

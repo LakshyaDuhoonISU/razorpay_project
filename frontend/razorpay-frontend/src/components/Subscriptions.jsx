@@ -375,6 +375,7 @@ function Subscriptions() {
                         />
                         <input
                             type="text"
+                            style={{ width: '100%' }}
                             placeholder="active"
                             value={formData.status}
                             readOnly
@@ -408,6 +409,9 @@ function Subscriptions() {
                             </p>
                             <p>
                                 <strong>Status: </strong> {subscription.status || "Active"}
+                            </p>
+                            <p>
+                                <strong>Payment Status: </strong> {subscription.paymentStatus || "Paid"}
                             </p>
                             {/* Show the cancel button only if the status is "active" */}
                             {subscription.status === 'active' && (

@@ -9,7 +9,7 @@ import { upiID } from '../constants';
 
 // GraphQL mutation
 const UPDATE_SUBSCRIPTION = gql`
-  mutation UpdateSubscription($id: ID!, $status: String!, $paymentStatus: String) {
+  mutation UpdateSubscription($id: ID!, $status: String, $paymentStatus: String) {
     updateSubscription(id: $id, status: $status, paymentStatus: $paymentStatus) {
       id
       status
@@ -97,7 +97,7 @@ const PaymentForm = () => {
             await updateSubscription({
                 variables: {
                     id: subscriptionId,
-                    status: status === 'success' ? 'active' : 'cancelled',
+                    // status: status === 'success' ? 'active' : 'cancelled',
                     paymentStatus: status === 'success' ? 'paid' : 'pending',
                 },
             });

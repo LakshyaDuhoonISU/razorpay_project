@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import connectDB from './dbConnection.js';
-import authMiddleware from './middlewares/authMiddleware.js';
 
 import customerRoutes from './routes/customerRoutes.js';
 import planRoutes from './routes/planRoutes.js';
@@ -11,7 +10,6 @@ import businessRoutes from './routes/businessRoutes.js';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { typeDefs, resolvers } from './graphql/index.js';
-import admin from './firebase.cjs';
 import generateUPIQR from './qrcode.cjs';
 
 // connect to database
