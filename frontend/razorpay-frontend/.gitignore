@@ -13,7 +13,6 @@ constants.js
 dist
 dist-ssr
 *.local
-firebaseConfig.js
 
 # Editor directories and files
 .vscode/*
