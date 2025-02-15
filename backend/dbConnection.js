@@ -1,11 +1,14 @@
 import mongoose from "mongoose";
+import dotenv from 'dotenv';
 
-export default function connectDB() {
-    mongoose.connect("mongodb://localhost:27017/razorpay")
-        .then(() => {
-            console.log("Connected to database")
-        })
-        .catch((err) => {
-            console.log(err)
-        })
+dotenv.config();
+
+export default async function connectDB() {
+    try {
+        await mongoose.connect(process.env.MONGODB_URI);
+        console.log("Connected to MongoDB Atlas");
+    } catch (error) {
+        console.error("MongoDB connection error:", error);
+        process.exit(1);
+    }
 }
