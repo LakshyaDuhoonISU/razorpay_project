@@ -7,7 +7,7 @@ export const registerBusiness = async (req, res) => {
     const { email, password, name, phone, address } = req.body;
 
     try {
-        // Step 1: Check if the email or phone already exists in MongoDB
+        // Check if the email or phone already exists in MongoDB
         const existingBusiness = await Business.findOne({ $or: [{ email }, { phone }] });
         if (existingBusiness) {
             return res.status(400).json({ error: 'Email or phone number already exists in MongoDB' });
@@ -16,14 +16,14 @@ export const registerBusiness = async (req, res) => {
         let userRecord;
 
         try {
-            // Step 2: Create a new user in Firebase Authentication using email and password
+            // Create a new user in Firebase Authentication using email and password
             userRecord = await admin.auth().createUser({
                 email,
                 password,
             });
         } catch (error) {
             if (error.code === 'auth/email-already-exists') {
-                // Step 3: Fetch the Firebase user if it already exists
+                // Fetch the Firebase user if it already exists
                 userRecord = await admin.auth().getUserByEmail(email);
 
                 // Check if the Firebase UID exists in MongoDB
@@ -32,7 +32,7 @@ export const registerBusiness = async (req, res) => {
                     return res.status(400).json({ error: 'Business already exists in both Firebase and MongoDB' });
                 }
 
-                // Step 4: If Firebase user exists but not in MongoDB, add the business to MongoDB
+                // If Firebase user exists but not in MongoDB, add the business to MongoDB
                 const newBusiness = new Business({
                     name,
                     email,
@@ -63,13 +63,13 @@ export const registerBusiness = async (req, res) => {
             throw error;
         }
 
-        // Step 5: Store the new business in MongoDB after successful Firebase creation
+        // Store the new business in MongoDB after successful Firebase creation
         const business = new Business({
             name,
             email,
             phone,
             address,
-            firebaseUid: userRecord.uid, // Store Firebase UID
+            firebaseUid: userRecord.uid,
         });
 
         await business.save();
@@ -96,9 +96,9 @@ export const registerBusiness = async (req, res) => {
 
 // Login a business
 export const loginBusiness = async (req, res) => {
-    const { idToken } = req.body;  // Expecting ID token from the client
+    const { idToken } = req.body;
 
-    console.log("Received ID Token:", idToken);  // Log the token to check it
+    console.log("Received ID Token:", idToken);
 
     try {
         // Verify the ID token received from the client
