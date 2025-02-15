@@ -113,7 +113,7 @@ const PaymentForm = () => {
         const fetchQRCode = async () => {
             if (paymentMethod === 'UPI') {
                 try {
-                    const response = await fetch('http://localhost:8000/generate-qr', {
+                    const response = await fetch(`${import.meta.env.VITE_API_URL}/generate-qr`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({

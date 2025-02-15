@@ -57,7 +57,7 @@ function Customers() {
 
     const fetchCustomers = async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/customers/', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/customers/`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${idToken}`,
@@ -80,7 +80,7 @@ function Customers() {
     const handleAddCustomer = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://localhost:8000/api/customers', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/customers`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

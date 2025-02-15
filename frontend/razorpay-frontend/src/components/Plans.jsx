@@ -64,7 +64,7 @@ function Plans() {
 
     const fetchPlans = async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/plans/business', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/plans/business`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${idToken}`,
@@ -85,7 +85,7 @@ function Plans() {
     const handleAddPlan = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://localhost:8000/api/plans', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/plans`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

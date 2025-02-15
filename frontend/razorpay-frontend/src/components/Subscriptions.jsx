@@ -61,7 +61,7 @@ function Subscriptions() {
 
     const fetchSubscriptions = async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/subscriptions', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/subscriptions`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${idToken}`,
@@ -83,7 +83,7 @@ function Subscriptions() {
 
     const fetchCustomers = async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/customers/', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/customers/`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${idToken}`,
@@ -103,7 +103,7 @@ function Subscriptions() {
 
     const fetchPlans = async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/plans/business', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/plans/business`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${idToken}`,
@@ -163,7 +163,7 @@ function Subscriptions() {
 
     const handleAddSubscription = async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/subscriptions', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/subscriptions`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

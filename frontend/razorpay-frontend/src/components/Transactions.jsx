@@ -14,7 +14,7 @@ function Transactions() {
     useEffect(() => {
         const fetchTransactions = async () => {
             try {
-                const response = await fetch('http://localhost:8000/api/transactions/', {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/transactions/`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${idToken}`,
